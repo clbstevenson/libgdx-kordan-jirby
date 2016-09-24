@@ -13,7 +13,7 @@ The basis for this repository is my high school senior project. The original was
 
 ### Original Project
 
-#### [Penguin Pong](http://www.github.com/exovum/PenguinPong)
+### [Penguin Pong](http://www.github.com/exovum/PenguinPong)
 
 ![Robot Penguins](https://github.com/exovum/PenguinPong/blob/master/res/pong/robotpenguin.png "Robot Penguins")
 
