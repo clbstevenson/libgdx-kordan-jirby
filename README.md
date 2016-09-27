@@ -1,4 +1,4 @@
-# libgdx-collisions
+# libgdx-rain
 
 ### Goals of this project
 

@@ -19,11 +19,11 @@ public class Animator implements ApplicationListener {
     private static final int FRAME_COLS = 6;
     private static final int FRAME_ROWS = 5;
 
-    Animation walkAnimation;
-    Texture walkSheet;
-    TextureRegion[] walkFrames;
-    SpriteBatch spriteBatch;
-    TextureRegion currentFrame;
+    private Animation walkAnimation;
+    private Texture walkSheet;
+    private TextureRegion[] walkFrames;
+    private SpriteBatch spriteBatch;
+    private TextureRegion currentFrame;
 
     float stateTime;
 
@@ -55,7 +55,7 @@ public class Animator implements ApplicationListener {
         currentFrame = walkAnimation.getKeyFrame(stateTime, true);
         spriteBatch.begin();
         // begin SpriteBatch rendering
-        spriteBatch.draw(currentFrame, 800, 600, 256, 307.2f);
+        spriteBatch.draw(currentFrame, 400, 200); //, 256, 307.2f);
         spriteBatch.end();
     }
 
