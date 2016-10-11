@@ -13,7 +13,11 @@ public class AndroidLauncher extends AndroidApplication {
 	protected void onCreate (Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
+
+        //SpriteGame: initial testing of Robot Penguin sprites
 		//initialize(new SpriteGame(), config);
+
+        //Animator: Jordan Kirby running simulator
         initialize(new Animator(), config);
 	}
 }

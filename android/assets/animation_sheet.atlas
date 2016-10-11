@@ -1,0 +1,13 @@
+animation_sheet.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+0001
+  rotate: false
+  xy: 1, 651
+  size: 83, 102
+  orig: 83, 102
+  offset: 0, 0
+  index: -1
+0002
+  rotate: false
