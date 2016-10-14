@@ -31,7 +31,10 @@ public class AnimatorMainScreen implements Screen {
     Animation jkirbyAnimation;
     AnimatedSprite jkirbyAnimatedSprite;
 
-    private Sprite mapSprite;
+    // The two Sprites for the map are used to "loop" the map as the player runs
+    private Sprite mapSprite, mapSprite2;
+    // Boolean to determine which map is on the main screen; used to know when to switch map positions
+    boolean displayMap1;
 
     float floorPos;
 
@@ -54,11 +57,20 @@ public class AnimatorMainScreen implements Screen {
         //camera.position.set(camera.viewportWidth / 2f, camera.viewportHeight / 2f, 0);
         //camera.update();
 
+        // Start the "displayFirstMap" flag as true, because map1 is shown first
+        displayMap1 = true;
         mapSprite = new Sprite(new Texture(Gdx.files.internal
                 ("beach-ocean-sea-bg/transparent-png/full_background.png")));
+        mapSprite2 = new Sprite(new Texture(Gdx.files.internal
+                ("beach-ocean-sea-bg/transparent-png/full_background.png")));
         //viewport.get
-        mapSprite.setPosition(-400, -240);
+        // Position the map to the bottom-left of the screen
+        mapSprite.setPosition(-400, -220);
+        // Resize the map so the height fits within the view, but keep original width
         mapSprite.setSize(mapSprite.getRegionWidth(), viewport.getScreenHeight());
+        // Repeat adjustments for map2
+        mapSprite2.setPosition(mapSprite.getX() + mapSprite.getWidth(), mapSprite.getY());
+        mapSprite2.setSize(mapSprite.getRegionWidth(), viewport.getScreenHeight());
 
 
         // Setup the TextureAtlas for the jkirby running frames
@@ -80,15 +92,43 @@ public class AnimatorMainScreen implements Screen {
     @Override
     public void render(float delta) {
         handleInput();
+        // auto-move the background left, so the animation to the left
+        camera.translate(
+                3, 0, 0);
+        jkirbyAnimatedSprite.setPosition(jkirbyAnimatedSprite.getX() +3, jkirbyAnimatedSprite.getY());
         camera.update();
         batch.setProjectionMatrix(camera.combined);
 
-        Gdx.gl.glClearColor(0.5f, 0.5f, 1.0f, 1);
+        Gdx.gl.glClearColor(0.0f, 0.0f, 0.0f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         // Begin SpriteBatch rendering
         batch.begin();
         mapSprite.draw(batch);
+        mapSprite2.draw(batch);
+        if(displayMap1) {
+            // check if switching from mapSprite to mapSprite2
+            // plus (sprite.width * 3) so map1 isn't visible when it disappears
+            if(jkirbyAnimatedSprite.getX() >= mapSprite2.getX() +
+                    jkirbyAnimatedSprite.getWidth() *3) {
+                //Once the player has switched to map2, move map1 to after map2
+                mapSprite.setPosition(mapSprite2.getX() + mapSprite2.getWidth(),
+                        mapSprite2.getY());
+                // switch the "displayFirstMap" off
+                displayMap1 = false;
+            }
+        } else {
+            // check if switching from map2 to map1
+            // plus (sprite.width * 3) so map1 isn't visible when it disappears
+            if(jkirbyAnimatedSprite.getX() >= mapSprite.getX() +
+                    jkirbyAnimatedSprite.getWidth() *3) {
+                //Once the player has switched to map2, move map1 to after map2
+                mapSprite2.setPosition(mapSprite.getX() + mapSprite.getWidth(),
+                        mapSprite.getY());
+                // switch the "displayFirstMap" on
+                displayMap1 = true;
+            }
+        }
         jkirbyAnimatedSprite.draw(batch);
         // End SpriteBatch rendering
         batch.end();
@@ -97,6 +137,8 @@ public class AnimatorMainScreen implements Screen {
     private void handleInput() {
         //TODO: handle moving left/right, scrolling background, moving animation
         //TODO: handle touch/gesture events [touchDown to jump higher]
+
+
     }
 
     @Override
