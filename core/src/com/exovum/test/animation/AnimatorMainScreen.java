@@ -6,6 +6,8 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -23,6 +25,9 @@ public class AnimatorMainScreen implements Screen {
     static final int WORLD_WIDTH = 100;
     static final int WORLD_HEIGHT = 100;
 
+    private BitmapFont font;
+    private GlyphLayout glyphLayout;
+
     private Viewport viewport;
     private OrthographicCamera camera;
     SpriteBatch batch;
@@ -36,6 +41,11 @@ public class AnimatorMainScreen implements Screen {
     // Boolean to determine which map is on the main screen; used to know when to switch map positions
     boolean displayMap1;
 
+    // Sprites for obstacles
+    private Sprite shortTree, tallTree;
+
+    float distanceTraveled;
+    float moveSpeed;
     float floorPos;
 
     public AnimatorMainScreen(SpriteBatch batch) {
@@ -47,6 +57,13 @@ public class AnimatorMainScreen implements Screen {
         float h = Gdx.graphics.getHeight();
         // Set the floor to be 100 below the middle of the screen
         floorPos = -150;
+        // Set the initial movement speed of camera/player [can be changed later]
+        moveSpeed = 3;
+        // Initialize the player's distance traveled to 0; accumulates based on moveSpeed
+        distanceTraveled = 0;
+
+        font = new BitmapFont(Gdx.files.internal("fonts/boxy_bold_font.png"));
+        glyphLayout = new GlyphLayout();
 
         // Constructs a new OrthographicCamera, using the given viewport width and height
         // Height is multiplied by aspect ratio.
@@ -85,17 +102,25 @@ public class AnimatorMainScreen implements Screen {
         jkirbyAnimatedSprite = new AnimatedSprite(jkirbyAnimation);
         jkirbyAnimatedSprite.play();
         //jkirbyAnimatedSprite.setPosition(-250, floorPos);
-        jkirbyAnimatedSprite.setPosition(-1 * viewport.getScreenWidth() / 2, floorPos);
+        jkirbyAnimatedSprite.setPosition(-1 * viewport.getScreenWidth() / 2 + jkirbyAnimatedSprite.getWidth(),
+                floorPos);
         //jkirbyAnimatedSprite.setSize(2,3);
+
+        shortTree = new Sprite(new Texture(Gdx.files.internal("flat-tree-game-ornaments/tree-1.png")));
+        tallTree = new Sprite(new Texture(Gdx.files.internal("flat-tree-game-ornaments/tree-2.png")));
     }
 
     @Override
     public void render(float delta) {
         handleInput();
-        // auto-move the background left, so the animation to the left
+        // auto-move the background left, so the animation to the left [based on moveSpeed]
         camera.translate(
-                3, 0, 0);
-        jkirbyAnimatedSprite.setPosition(jkirbyAnimatedSprite.getX() +3, jkirbyAnimatedSprite.getY());
+                moveSpeed, 0, 0);
+        // Move the player animation with the camera [based on moveSpeed]
+        jkirbyAnimatedSprite.setPosition(jkirbyAnimatedSprite.getX() + moveSpeed,
+                jkirbyAnimatedSprite.getY());
+        // Increment distanceTraveled based on moveSpeed
+        distanceTraveled += moveSpeed;
         camera.update();
         batch.setProjectionMatrix(camera.combined);
 
@@ -106,6 +131,11 @@ public class AnimatorMainScreen implements Screen {
         batch.begin();
         mapSprite.draw(batch);
         mapSprite2.draw(batch);
+        // Display the distance traveled so far
+        glyphLayout.setText(font, "Distance: " + distanceTraveled);
+        // draw it at the top-middle of the screen
+        font.draw(batch, glyphLayout, 0 - glyphLayout.width / 2, viewport.getScreenHeight() / 2);
+
         if(displayMap1) {
             // check if switching from mapSprite to mapSprite2
             // plus (sprite.width * 3) so map1 isn't visible when it disappears
@@ -172,6 +202,9 @@ public class AnimatorMainScreen implements Screen {
     @Override
     public void dispose() {
         mapSprite.getTexture().dispose();
+        mapSprite2.getTexture().dispose();
+        shortTree.getTexture().dispose();
+        tallTree.getTexture().dispose();
         jkirbyAnimatedSprite.getTexture().dispose();
         batch.dispose();
     }
