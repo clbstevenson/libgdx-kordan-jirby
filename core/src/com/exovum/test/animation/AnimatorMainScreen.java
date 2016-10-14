@@ -58,6 +58,8 @@ public class AnimatorMainScreen implements Screen {
         // Create an AnimatedSprite, which contains the Animation and Sprite information
         jkirbyAnimatedSprite = new AnimatedSprite(jkirbyAnimation);
         jkirbyAnimatedSprite.play();
+        jkirbyAnimatedSprite.setPosition(0, 0);
+        jkirbyAnimatedSprite.setSize(2,3);
     }
 
     @Override
@@ -69,7 +71,7 @@ public class AnimatorMainScreen implements Screen {
 
         // Begin SpriteBatch rendering
         batch.begin();
-        mapSprite.draw(batch);
+        //mapSprite.draw(batch);
         jkirbyAnimatedSprite.draw(batch);
         // End SpriteBatch rendering
         batch.end();
@@ -82,8 +84,8 @@ public class AnimatorMainScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        camera.viewportWidth = 30f;
-        camera.viewportHeight = 30f * height/width;
+        camera.viewportWidth = width / 32f;
+        camera.viewportHeight = camera.viewportWidth * height/width;
         camera.update();
     }
 
