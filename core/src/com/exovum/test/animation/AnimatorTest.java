@@ -1,4 +1,4 @@
-package com.exovum.test.collisions;
+package com.exovum.test.animation;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
@@ -16,7 +16,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -30,7 +29,7 @@ import java.util.Map;
  *      https://github.com/libgdx/libgdx/wiki/2D-Animation
  */
 
-public class Animator implements ApplicationListener, InputProcessor {
+public class AnimatorTest implements ApplicationListener, InputProcessor {
 
     private static final int FRAME_COLS = 6;
     private static final int FRAME_ROWS = 5;
@@ -41,11 +40,12 @@ public class Animator implements ApplicationListener, InputProcessor {
     private Animation walkAnimation;
     private Texture walkSheet;
     private TextureRegion[] walkFrames;
-    private TextureRegion currentFrame;
 
     private TextureAtlas atlas;
+    private TextureRegion currentFrame;
     private Sprite jkirbySprite;
     private Animation jkirbyAnimation;
+    AnimatedSprite jkirbyAnimatedSprite;
 
     private Viewport viewport;
     private Camera camera;
@@ -78,6 +78,9 @@ public class Animator implements ApplicationListener, InputProcessor {
         camera = new PerspectiveCamera();
         viewport = new FitViewport(800, 480, camera);
 
+        // The stateTime is used to find the current Animation frame based time passed per update
+        stateTime = 0f;
+
         walkSheet = new Texture(Gdx.files.internal("animation_sheet.png"));
         TextureRegion[][] tmp = TextureRegion.split(walkSheet, walkSheet.getWidth()/FRAME_COLS, walkSheet.getHeight()/FRAME_ROWS);
         walkFrames = new TextureRegion[FRAME_COLS * FRAME_ROWS];
@@ -108,11 +111,15 @@ public class Animator implements ApplicationListener, InputProcessor {
         Array<AtlasRegion> jkirbyFrames = atlas.findRegions("jk-frame");
 
         // Create the jkirbySprite based on the first image in the jkirby_atlas
-        jkirbySprite = atlas.createSprite("jk-frame", 1);
+        //jkirbySprite = atlas.createSprite("jk-frame", 1);
 
         // Create the jkirbyAnimation using the array of frames in the TextureAtlas
         // frame duration: 0.15f [WIP], jkirbyFrames is array of frames to be animated
-        jkirbyAnimation = new Animation(0.15f, jkirbyFrames);
+        jkirbyAnimation = new Animation(0.00025f, jkirbyFrames);
+        //jkirbySprite = new Sprite(jkirbyAnimation.getKeyFrame(stateTime, true).getTexture());
+        jkirbySprite = atlas.createSprite("jk-frame");
+        jkirbyAnimatedSprite = new AnimatedSprite(jkirbyAnimation);
+        jkirbyAnimatedSprite.play();
 
         /*
         The following code scales the size of the running sprite based on the screen width/height.
@@ -140,8 +147,10 @@ public class Animator implements ApplicationListener, InputProcessor {
             frameWidth = originalFrameWidth * frameHeight / originalFrameHeight;
             //frameWidth = scaledWidth * (scaledHeight / frameHeight);
         }
+
         // Set the width/height of jkirbySprite to be proportional to screen size
         jkirbySprite.setSize(frameWidth, frameHeight);
+
         // Set x/y position to the middle of the screen, adjusting for size of the sprite
         posX = w/2 - frameWidth / 2;
         posY = h/2 - frameHeight / 2;
@@ -152,12 +161,15 @@ public class Animator implements ApplicationListener, InputProcessor {
         velY = 0;
         accX = 0;
         accY = -2;
+
         // Set the touchDownTimer to 0; used to track how 'long' touchDown before touch is released
+        // This can be used to increase jump height/velocity based on time touchdown is held
         touchDownTimer = 0;
 
+        // set the starting position of the running sprite
         jkirbySprite.setPosition(posX, posY);
 
-        stateTime = 0f;
+
     }
 
     @Override
@@ -177,16 +189,25 @@ public class Animator implements ApplicationListener, InputProcessor {
         //Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        // increase state time based on delta (change in) time between frames
+        // Increase state time based on delta (change in) time between frames
         stateTime += Gdx.graphics.getDeltaTime();
-        //currentFrame = walkAnimation.getKeyFrame(stateTime, true);
+        currentFrame = walkAnimation.getKeyFrame(stateTime, true);
+
+        // Get the next frame from the running animation, and store in TextureRegion
         // The 2nd parameter sets if the animation is looping
-        TextureRegion currentFrame = jkirbyAnimation.getKeyFrame(stateTime, true);
+        currentFrame = jkirbyAnimation.getKeyFrame(stateTime, true);
         //jkirbySprite.setTexture(currentFrame.getTexture());
+        // Update the sprite's texture based on current frame in the animation
+        jkirbySprite.setTexture(currentFrame.getTexture());
+        jkirbyAnimatedSprite.play();
 
         // begin SpriteBatch rendering
         spriteBatch.begin();
 
+        /*
+         * DEBUG MESSAGES
+         * Draw any messages for debugging purposes here.
+         */
         message = "";
         for(int i = 0; i < 5; i++) {
             if(touches.get(i).touched)
@@ -212,7 +233,12 @@ public class Animator implements ApplicationListener, InputProcessor {
         font.draw(spriteBatch, originalFrameValue, 10, Gdx.graphics.getHeight() - 80);
         font.draw(spriteBatch, "Touch Down Timer: " + touchDownTimer, 10,
                 Gdx.graphics.getHeight() - 120);
+        /*
+            END DEBUG MESSAGES
+         */
 
+        // If the player sprite is jumping, update position based on velocity.
+        // Velocity is also updated based on the acceleration.
         if(jumping) {
             if(posY >= centerY) {
                 posY += velY;
@@ -222,10 +248,13 @@ public class Animator implements ApplicationListener, InputProcessor {
                 jumping = false;
             }
         }
+
+        // Draw the current frame from the player's animation
         //spriteBatch.draw(currentFrame, posX, posY); //, 64, 64); //, 256, 307.2f);
         //spriteBatch.draw(currentFrame, posX, posY, frameWidth, frameHeight);
         // Use the jkirbySprite instead of currentFrame textures to render the animation
-        jkirbySprite.draw(spriteBatch);
+        //jkirbySprite.draw(spriteBatch);
+        jkirbyAnimatedSprite.draw(spriteBatch);
         //spriteBatch.draw(currentFrame, posX, posY, walkFrames[0].getRegionWidth(), walkFrames[0].getRegionHeight());
         spriteBatch.end();
     }

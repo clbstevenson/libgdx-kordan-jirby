@@ -2,10 +2,7 @@ package com.exovum.test.collisions.desktop;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import com.exovum.test.collisions.Animator;
-import com.exovum.test.collisions.CollisionsTest;
-import com.exovum.test.collisions.GraphicsDemo;
-import com.exovum.test.collisions.SpriteGame;
+import com.exovum.test.animation.AnimatorTest;
 
 public class DesktopLauncher {
 	public static void main (String[] arg) {
@@ -20,7 +17,7 @@ public class DesktopLauncher {
         //new LwjglApplication(new Animator(), config);
 
         // Launch Animator: Jordan Kirby running simulator
-        new LwjglApplication(new Animator(), config);
+        new LwjglApplication(new AnimatorTest(), config);
 
         // Launch SpriteGame: initial testing of Robot Penguin sprites
         //new LwjglApplication(new SpriteGame(), config);
