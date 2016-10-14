@@ -18,7 +18,7 @@ public class AndroidLauncher extends AndroidApplication {
 
         //Animator: Jordan Kirby running simulator
         //initialize(new AnimatorTest(), config);
-        //initialize(new AnimatorTestGame(), config);
-        initialize(new OrthographicCameraExample(), config);
+        initialize(new AnimatorTestGame(), config);
+        //initialize(new OrthographicCameraExample(), config);
 	}
 }

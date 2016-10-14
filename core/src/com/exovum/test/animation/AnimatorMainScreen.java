@@ -11,6 +11,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 /**
  * Created by exovu_000 on 10/14/2016.
@@ -21,6 +23,7 @@ public class AnimatorMainScreen implements Screen {
     static final int WORLD_WIDTH = 100;
     static final int WORLD_HEIGHT = 100;
 
+    private Viewport viewport;
     private OrthographicCamera camera;
     SpriteBatch batch;
     private TextureAtlas atlas;
@@ -29,6 +32,8 @@ public class AnimatorMainScreen implements Screen {
     AnimatedSprite jkirbyAnimatedSprite;
 
     private Sprite mapSprite;
+
+    float floorPos;
 
     public AnimatorMainScreen(SpriteBatch batch) {
         this.batch = batch;
@@ -39,13 +44,15 @@ public class AnimatorMainScreen implements Screen {
 
         float w = Gdx.graphics.getWidth();
         float h = Gdx.graphics.getHeight();
+        // Set the floor to be 100 below the middle of the screen
+        floorPos = -150;
 
         // Constructs a new OrthographicCamera, using the given viewport width and height
         // Height is multiplied by aspect ratio.
         camera = new OrthographicCamera(30, 30 * (h / w));
-
-        camera.position.set(camera.viewportWidth / 2f, camera.viewportHeight / 2f, 0);
-        camera.update();
+        viewport = new FitViewport(800, 480, camera);
+        //camera.position.set(camera.viewportWidth / 2f, camera.viewportHeight / 2f, 0);
+        //camera.update();
 
         // Setup the TextureAtlas for the jkirby running frames
         atlas = new TextureAtlas(Gdx.files.internal("jkirby_atlas.atlas"));
@@ -58,16 +65,16 @@ public class AnimatorMainScreen implements Screen {
         // Create an AnimatedSprite, which contains the Animation and Sprite information
         jkirbyAnimatedSprite = new AnimatedSprite(jkirbyAnimation);
         jkirbyAnimatedSprite.play();
-        jkirbyAnimatedSprite.setPosition(0, 0);
-        jkirbyAnimatedSprite.setSize(2,3);
+        jkirbyAnimatedSprite.setPosition(-250, floorPos);
+        //jkirbyAnimatedSprite.setSize(2,3);
     }
 
     @Override
     public void render(float delta) {
+        batch.setProjectionMatrix(camera.combined);
+
         Gdx.gl.glClearColor(0.5f, 0.5f, 1.0f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        batch.setProjectionMatrix(camera.combined);
 
         // Begin SpriteBatch rendering
         batch.begin();
@@ -84,8 +91,9 @@ public class AnimatorMainScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        camera.viewportWidth = width / 32f;
-        camera.viewportHeight = camera.viewportWidth * height/width;
+        //camera.viewportWidth = width / 32f;
+        //camera.viewportHeight = camera.viewportWidth * height/width;
+        viewport.update(width, height);
         camera.update();
     }
 
