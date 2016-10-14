@@ -38,9 +38,7 @@ public class AnimatorMainScreen implements Screen {
     public AnimatorMainScreen(SpriteBatch batch) {
         this.batch = batch;
 
-        mapSprite = new Sprite(new Texture(Gdx.files.internal("sc_map.png")));
-        mapSprite.setPosition(0, 0);
-        mapSprite.setSize(WORLD_WIDTH, WORLD_HEIGHT);
+
 
         float w = Gdx.graphics.getWidth();
         float h = Gdx.graphics.getHeight();
@@ -51,8 +49,17 @@ public class AnimatorMainScreen implements Screen {
         // Height is multiplied by aspect ratio.
         camera = new OrthographicCamera(30, 30 * (h / w));
         viewport = new FitViewport(800, 480, camera);
+        camera.update();
+        viewport.update(800, 480);
         //camera.position.set(camera.viewportWidth / 2f, camera.viewportHeight / 2f, 0);
         //camera.update();
+
+        mapSprite = new Sprite(new Texture(Gdx.files.internal
+                ("beach-ocean-sea-bg/transparent-png/full_background.png")));
+        //viewport.get
+        mapSprite.setPosition(-400, -240);
+        mapSprite.setSize(mapSprite.getRegionWidth(), viewport.getScreenHeight());
+
 
         // Setup the TextureAtlas for the jkirby running frames
         atlas = new TextureAtlas(Gdx.files.internal("jkirby_atlas.atlas"));
@@ -65,12 +72,15 @@ public class AnimatorMainScreen implements Screen {
         // Create an AnimatedSprite, which contains the Animation and Sprite information
         jkirbyAnimatedSprite = new AnimatedSprite(jkirbyAnimation);
         jkirbyAnimatedSprite.play();
-        jkirbyAnimatedSprite.setPosition(-250, floorPos);
+        //jkirbyAnimatedSprite.setPosition(-250, floorPos);
+        jkirbyAnimatedSprite.setPosition(-1 * viewport.getScreenWidth() / 2, floorPos);
         //jkirbyAnimatedSprite.setSize(2,3);
     }
 
     @Override
     public void render(float delta) {
+        handleInput();
+        camera.update();
         batch.setProjectionMatrix(camera.combined);
 
         Gdx.gl.glClearColor(0.5f, 0.5f, 1.0f, 1);
@@ -78,10 +88,15 @@ public class AnimatorMainScreen implements Screen {
 
         // Begin SpriteBatch rendering
         batch.begin();
-        //mapSprite.draw(batch);
+        mapSprite.draw(batch);
         jkirbyAnimatedSprite.draw(batch);
         // End SpriteBatch rendering
         batch.end();
+    }
+
+    private void handleInput() {
+        //TODO: handle moving left/right, scrolling background, moving animation
+        //TODO: handle touch/gesture events [touchDown to jump higher]
     }
 
     @Override
