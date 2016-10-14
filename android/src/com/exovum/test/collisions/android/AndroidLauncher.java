@@ -4,7 +4,8 @@ import android.os.Bundle;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
-import com.exovum.test.animation.AnimatorTest;
+import com.exovum.test.animation.AnimatorTestGame;
+import com.exovum.test.animation.OrthographicCameraExample;
 
 public class AndroidLauncher extends AndroidApplication {
 	@Override
@@ -16,6 +17,8 @@ public class AndroidLauncher extends AndroidApplication {
 		//initialize(new SpriteGame(), config);
 
         //Animator: Jordan Kirby running simulator
-        initialize(new AnimatorTest(), config);
+        //initialize(new AnimatorTest(), config);
+        //initialize(new AnimatorTestGame(), config);
+        initialize(new OrthographicCameraExample(), config);
 	}
 }
