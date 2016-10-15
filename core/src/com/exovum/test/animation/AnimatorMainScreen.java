@@ -144,6 +144,7 @@ public class AnimatorMainScreen implements Screen {
         //jkirbyAnimatedSprite.setX(jkirbyAnimatedSprite.getX() + moveSpeed);
         // Increment distanceTraveled based on moveSpeed
         distanceTraveled += jkirbyAnimatedSprite.getVelocityX();
+        jkirbyAnimatedSprite.updateVelocity(distanceTraveled);
         camera.update();
         batch.setProjectionMatrix(camera.combined);
 

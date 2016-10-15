@@ -128,6 +128,15 @@ class AnimatedPlayer extends AnimatedSprite {
     public void updateVelocityY(float y) {
         velocity.setY(velocity.getY() + y);
     }
+    public void updateVelocity(float distance) {
+        // Limit horizontal speed to 100
+        if(velocity.x < 100) {
+            // scale the threshold for speed increase based on current speed
+            if (((int) distance / (500 * velocity.x)) > velocity.x - 1) {
+                velocity.x++;
+            }
+        }
+    }
 
     // Getters for velocity
     public Vector2f getVelocity() {
