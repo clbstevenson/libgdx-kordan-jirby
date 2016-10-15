@@ -12,4 +12,5 @@ eclipse.project {
 
 dependencies {
     compile 'com.badlogicgames.gdx:gdx-tools:1.7.0'
+    compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
 }
