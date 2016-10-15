@@ -20,6 +20,7 @@ class AnimatedPlayer extends AnimatedSprite {
 
     // Once the player has jumped, store the initial jump position so it can be reset later
     private Vector2f startPos;
+    private Vector2f startVel;
     // A vector containing AnimatedPlayer's x- and y-direction velocities
     private Vector2f velocity;
     // A vector containing AnimatedPlayer's x- and y-direction acceleration
@@ -40,8 +41,10 @@ class AnimatedPlayer extends AnimatedSprite {
         startPos = new Vector2f(getX(), getY());
         // Initial velocity is moveSpeed as x-direction and 0 y-direction
         velocity = new Vector2f(moveSpeed, 0);
+        // Initial startVel is same as velocity
+        startVel = new Vector2f(velocity.x, velocity.y);
         // Initial acceleration is 0 y-direction and -10 y-direction ('gravity')
-        acceleration = new Vector2f(0, -2);
+        acceleration = new Vector2f(-1, -1);
     }
 
     @Override
@@ -73,6 +76,10 @@ class AnimatedPlayer extends AnimatedSprite {
         // If the player is jumping, update position based on velocity
         // Velocity is also updated based on acceleration
         if(jumping) {
+            updateVelocityX(acceleration.x);
+            if(velocity.x <= startVel.x) {
+                velocity.x = startVel.x;
+            }
             if(velocity.y > 0) {
                 setY(getY() + velocity.y);
                 updateVelocityY(acceleration.y);
@@ -107,6 +114,10 @@ class AnimatedPlayer extends AnimatedSprite {
 
     private void setStartPos(float x, float y) {
         startPos.set(x, y);
+    }
+
+    private void setStartVel(float x, float y) {
+        startVel.set(x, y);
     }
 
     //Setters for velocity
@@ -179,7 +190,9 @@ class AnimatedPlayer extends AnimatedSprite {
         // if not already jumping, set velocity to given value
         if(!jumping) {
             setStartPos(getX(), getY());
+            setStartVel(velocity.x, velocity.y);
             setVelocityY(y);
+            setVelocityX(velocity.x * 2.5f);
             jumping = true;
         }
         // otherwise, do nothing

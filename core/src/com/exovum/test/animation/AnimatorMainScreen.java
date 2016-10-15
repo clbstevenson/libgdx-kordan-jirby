@@ -68,7 +68,7 @@ public class AnimatorMainScreen implements Screen {
         // Set the floor to be 100 below the middle of the screen
         floorPos = -150;
         // Set the initial movement speed of camera/player [can be changed later]
-        moveSpeed = 3;
+        moveSpeed = 5;
         // Initialize the player's distance traveled to 0; accumulates based on moveSpeed
         distanceTraveled = 0;
 
@@ -123,6 +123,8 @@ public class AnimatorMainScreen implements Screen {
         // Add jkirbyAnimatedPlayer to the GestureListener's array of sprites
 
         shortTree = new Sprite(new Texture(Gdx.files.internal("flat-tree-game-ornaments/tree-1.png")));
+        shortTree.setPosition(camera.viewportWidth, floorPos);
+        shortTree.setSize(50, 50);
         tallTree = new Sprite(new Texture(Gdx.files.internal("flat-tree-game-ornaments/tree-2.png")));
 
         // Setup the AnimatorGestureListener for handling input
@@ -191,6 +193,7 @@ public class AnimatorMainScreen implements Screen {
             }
         }
         jkirbyAnimatedSprite.draw(batch);
+        shortTree.draw(batch);
         // End SpriteBatch rendering
         batch.end();
     }
