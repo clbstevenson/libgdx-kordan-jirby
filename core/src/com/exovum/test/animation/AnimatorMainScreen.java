@@ -15,6 +15,8 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
+import com.badlogic.gdx.input.GestureDetector;
+import com.badlogic.gdx.input.GestureDetector.GestureListener;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -62,6 +64,8 @@ public class AnimatorMainScreen implements Screen {
         this.batch = batch;
 
 
+        // Setup the AnimatorGestureListener for handling input
+        Gdx.input.setInputProcessor(new GestureDetector(new AnimatorGestureListener()));
 
         float w = Gdx.graphics.getWidth();
         float h = Gdx.graphics.getHeight();
