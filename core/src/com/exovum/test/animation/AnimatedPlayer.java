@@ -192,7 +192,7 @@ class AnimatedPlayer extends AnimatedSprite {
             setStartPos(getX(), getY());
             setStartVel(velocity.x, velocity.y);
             setVelocityY(y);
-            setVelocityX(velocity.x * 2.5f);
+            setVelocityX(velocity.x + y / 3f);
             jumping = true;
         }
         // otherwise, do nothing

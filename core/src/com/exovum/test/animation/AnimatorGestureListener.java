@@ -44,7 +44,7 @@ public class AnimatorGestureListener implements GestureDetector.GestureListener 
         if(player instanceof AnimatedPlayer) {
             // Process jumping for the AnimatedPlayer
             AnimatedPlayer animatedPlayer = ((AnimatedPlayer) player);
-            animatedPlayer.tryJump(15);
+            animatedPlayer.tryJump(17);
         } else {
             // Otherwise, just set the position normally?
         }
@@ -71,9 +71,9 @@ public class AnimatorGestureListener implements GestureDetector.GestureListener 
             if(convertedJumpSpeed < 0)
                 convertedJumpSpeed = 0;
             // do some integer conversion for removing non-regular values, and base jump value is 20
-            convertedJumpSpeed = ((int) convertedJumpSpeed) * 2  + 15;
+            convertedJumpSpeed = ((int) convertedJumpSpeed) * 2  + 17;
             Gdx.app.log("AnimatorGestureListener", "convertedJumpSpeed: " + convertedJumpSpeed);
-            convertedJumpSpeed = Math.min(convertedJumpSpeed, 22);
+            convertedJumpSpeed = Math.min(convertedJumpSpeed, 23);
             Gdx.app.log("AnimatorGestureListener", "min convertedJumpSpeed: " + convertedJumpSpeed);
             animatedPlayer.tryJump(convertedJumpSpeed);
         } else {

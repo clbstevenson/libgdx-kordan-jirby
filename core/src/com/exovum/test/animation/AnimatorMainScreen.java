@@ -126,6 +126,8 @@ public class AnimatorMainScreen implements Screen {
         shortTree.setPosition(camera.viewportWidth, floorPos);
         shortTree.setSize(50, 50);
         tallTree = new Sprite(new Texture(Gdx.files.internal("flat-tree-game-ornaments/tree-2.png")));
+        tallTree.setSize(50, 100);
+        tallTree.setPosition(shortTree.getX() + ((float)Math.random()) * 20 + 100, floorPos);
 
         // Setup the AnimatorGestureListener for handling input
         Gdx.input.setInputProcessor(new GestureDetector(
@@ -192,8 +194,9 @@ public class AnimatorMainScreen implements Screen {
                 displayMap1 = true;
             }
         }
-        jkirbyAnimatedSprite.draw(batch);
         shortTree.draw(batch);
+        tallTree.draw(batch);
+        jkirbyAnimatedSprite.draw(batch);
         // End SpriteBatch rendering
         batch.end();
     }
