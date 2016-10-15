@@ -71,7 +71,7 @@ public class AnimatorMainScreen implements Screen {
         glyphLayout = new GlyphLayout();
         generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Boxy-Bold.ttf"));
         parameter = new FreeTypeFontParameter();
-        parameter.size = 32;
+        parameter.size = 26; // font size
         font = generator.generateFont(parameter); // font size of 12 pizels
         font.setColor(Color.BLACK);
 
@@ -142,12 +142,13 @@ public class AnimatorMainScreen implements Screen {
         mapSprite.draw(batch);
         mapSprite2.draw(batch);
         // Display the distance traveled so far
-        //glyphLayout.setText(font, "Distance: " + distanceTraveled);
-        // draw it at the top-middle of the screen
-        //font.draw(batch, glyphLayout, 0, 0);
-        font.draw(batch, "Viewport Screen Pos (" + viewport.getScreenX() + ", "
-                + viewport.getScreenY() + ")", 0, 0);
-        //font2.draw(batch, "Font 2", 0, 0);
+        // Use glyphlayout so it is easier to find the middle of the displayed text
+        glyphLayout.setText(font, "" + (int) distanceTraveled);
+        // Draw the distance at the top-middle of the screen
+        font.draw(batch, glyphLayout, camera.position.x - glyphLayout.width / 2,
+                camera.viewportHeight / 2);
+        //font.draw(batch, "Distance: " + distanceTraveled, camera.position.x,
+        //        camera.viewportHeight / 2);
 
         if(displayMap1) {
             // check if switching from mapSprite to mapSprite2
