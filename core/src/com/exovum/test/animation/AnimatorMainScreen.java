@@ -28,7 +28,7 @@ public class AnimatorMainScreen implements Screen {
     static final int WORLD_WIDTH = 100;
     static final int WORLD_HEIGHT = 100;
 
-    private BitmapFont font, font2;
+    private BitmapFont font;
     private GlyphLayout glyphLayout;
     private FreeTypeFontParameter parameter;
     private FreeTypeFontGenerator generator;
@@ -74,7 +74,6 @@ public class AnimatorMainScreen implements Screen {
         parameter.size = 32;
         font = generator.generateFont(parameter); // font size of 12 pizels
         font.setColor(Color.BLACK);
-        font2 = new BitmapFont();
 
         // Constructs a new OrthographicCamera, using the given viewport width and height
         // Height is multiplied by aspect ratio.
@@ -146,7 +145,8 @@ public class AnimatorMainScreen implements Screen {
         //glyphLayout.setText(font, "Distance: " + distanceTraveled);
         // draw it at the top-middle of the screen
         //font.draw(batch, glyphLayout, 0, 0);
-        font.draw(batch, "Font 1", 0, 0);
+        font.draw(batch, "Viewport Screen Pos (" + viewport.getScreenX() + ", "
+                + viewport.getScreenY() + ")", 0, 0);
         //font2.draw(batch, "Font 2", 0, 0);
 
         if(displayMap1) {
@@ -221,7 +221,6 @@ public class AnimatorMainScreen implements Screen {
         jkirbyAnimatedSprite.getTexture().dispose();
         font.dispose();
         generator.dispose();
-        font2.dispose();
         batch.dispose();
     }
 }
