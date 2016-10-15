@@ -21,6 +21,11 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 /**
  * Created by exovu_000 on 10/14/2016.
+ * This is the main Screen for displaying the jkirby running animation.
+ * It uses a camera and viewport to render the sprites and scale them accordingly.
+ * The running animation sprite [AnimatedSprite] stays on the same spot on the screen, but the
+ * background will move behind it. Obstacles will appear and the player will need to jump high
+ * enough to avoid the traps.
  */
 
 public class AnimatorMainScreen implements Screen {
