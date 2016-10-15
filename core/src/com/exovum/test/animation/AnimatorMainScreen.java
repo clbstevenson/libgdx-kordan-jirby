@@ -42,23 +42,23 @@ public class AnimatorMainScreen implements Screen {
 
     private Viewport viewport;
     private OrthographicCamera camera;
-    SpriteBatch batch;
+    private SpriteBatch batch;
     private TextureAtlas atlas;
 
-    Animation jkirbyAnimation;
-    AnimatedPlayer jkirbyAnimatedSprite;
+    private Animation jkirbyAnimation;
+    private AnimatedPlayer jkirbyAnimatedSprite;
 
     // The two Sprites for the map are used to "loop" the map as the player runs
     private Sprite mapSprite, mapSprite2;
     // Boolean to determine which map is on the main screen; used to know when to switch map positions
-    boolean displayMap1;
+    private boolean displayMap1;
 
     // Sprites for obstacles
     private Sprite shortTree, tallTree;
 
-    float distanceTraveled;
-    float moveSpeed;
-    float floorPos;
+    private float distanceTraveled;
+    private float moveSpeed;
+    private float floorPos;
 
     public AnimatorMainScreen(SpriteBatch batch) {
         this.batch = batch;
@@ -117,10 +117,8 @@ public class AnimatorMainScreen implements Screen {
         //jkirbyAnimatedSprite = new AnimatedSprite(jkirbyAnimation);
         jkirbyAnimatedSprite = new AnimatedPlayer(jkirbyAnimation, moveSpeed);
         jkirbyAnimatedSprite.play();
-        //jkirbyAnimatedSprite.setPosition(-250, floorPos);
         jkirbyAnimatedSprite.setPosition(-1 * viewport.getScreenWidth() / 2 + jkirbyAnimatedSprite.getWidth(),
                 floorPos);
-        //jkirbyAnimatedSprite.setSize(2,3);
 
         // Add jkirbyAnimatedPlayer to the GestureListener's array of sprites
 
@@ -139,9 +137,11 @@ public class AnimatorMainScreen implements Screen {
         camera.translate(
                 jkirbyAnimatedSprite.getVelocityX(), 0, 0);
         // Move the player animation with the camera [based on moveSpeed]
+        jkirbyAnimatedSprite.moveUpdate();
         //jkirbyAnimatedSprite.setPosition(jkirbyAnimatedSprite.getX() + moveSpeed,
-        //        jkirbyAnimatedSprite.getY());
-        jkirbyAnimatedSprite.update();
+         //      jkirbyAnimatedSprite.getY());
+        //jkirbyAnimatedSprite.update();
+        //jkirbyAnimatedSprite.setX(jkirbyAnimatedSprite.getX() + moveSpeed);
         // Increment distanceTraveled based on moveSpeed
         distanceTraveled += jkirbyAnimatedSprite.getVelocityX();
         camera.update();

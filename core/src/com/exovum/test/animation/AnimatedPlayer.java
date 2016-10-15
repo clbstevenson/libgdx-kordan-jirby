@@ -11,7 +11,7 @@ import org.lwjgl.util.vector.Vector2f;
  * This is used to process touch, gestures, jumps, and collisions for the player sprite.
  */
 
-public class AnimatedPlayer extends AnimatedSprite {
+class AnimatedPlayer extends AnimatedSprite {
 
     // A flag to determine if the AnimatedPlayer is currently jumping
     // NOTE: I suppose this could be checked via (vel.x/vel.y > 0), but the boolean may be simpler
@@ -24,7 +24,7 @@ public class AnimatedPlayer extends AnimatedSprite {
     // A vector containing AnimatedPlayer's x- and y-direction acceleration
     private Vector2f acceleration;
 
-    public AnimatedPlayer(Animation animation, float moveSpeed) {
+    AnimatedPlayer(Animation animation, float moveSpeed) {
         super(animation);
         initVelocity(moveSpeed);
     }
@@ -40,24 +40,25 @@ public class AnimatedPlayer extends AnimatedSprite {
         // Initial velocity is moveSpeed as x-direction and 0 y-direction
         velocity = new Vector2f(moveSpeed, 0);
         // Initial acceleration is 0 y-direction and -10 y-direction ('gravity')
-        acceleration = new Vector2f(0, -10);
+        acceleration = new Vector2f(0, -2);
     }
 
     @Override
     public void update() {
         super.update();
-        moveUpdate();
+        //setPosition(getX() + moveSpeed, getY());
+        //moveUpdate();
     }
 
     @Override
     public void update(float delta) {
         super.update(delta);
-        jumpUpdate(delta);
+        //moveUpdate(delta);
     }
 
     // Update player's position based on velocity
-    private void moveUpdate() {
-        setX(getX() + getVelocityX());
+    void moveUpdate() {
+        setPosition(getX() + velocity.x, getY());
         jumpUpdate();
     }
 
@@ -71,12 +72,12 @@ public class AnimatedPlayer extends AnimatedSprite {
         // If the player is jumping, update position based on velocity
         // Velocity is also updated based on acceleration
         if(jumping) {
-            if(getY() >= 0) {
+            if(getY() >= startPos.y) {
                 setY(getY() + velocity.getY());
                 updateVelocityY(acceleration.getY());
             } else {
-                // once return to starting point, then stop jumping
-                setY(0);
+                // once return to starting point, then stop jumping and reset to startPos.y
+                setY(startPos.y);
                 jumping = false;
             }
         }
@@ -85,23 +86,19 @@ public class AnimatedPlayer extends AnimatedSprite {
         // If the player is jumping, update position based on velocity
         // Velocity is also updated based on acceleration
         if(jumping) {
-            if(getY() >= startPos.getY()) {
+            if(getY() >= startPos.y) {
                 setY((getY() + velocity.getY()) * delta);
                 updateVelocityY(acceleration.getY() * delta);
             } else {
                 // once return to starting point, then stop jumping and reset to startPos.y value
-                resetPosition();
+                setY(startPos.y);
                 jumping = false;
             }
         }
     }
 
-    public void setStartPos(float x, float y) {
+    private void setStartPos(float x, float y) {
         startPos.set(x, y);
-    }
-    public void resetPosition() {
-        // only reset y-position because x-position will be off screen
-        this.setY(startPos.getY());
     }
 
     //Setters for velocity
@@ -161,7 +158,7 @@ public class AnimatedPlayer extends AnimatedSprite {
     }
 
     // Try to jump using the given y-velocity
-    public void tryJump(float y) {
+    void tryJump(float y) {
         // if not already jumping, set velocity to given value
         if(!jumping) {
             setStartPos(getX(), getY());

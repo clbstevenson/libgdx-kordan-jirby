@@ -43,7 +43,7 @@ public class AnimatorGestureListener implements GestureDetector.GestureListener 
         if(player instanceof AnimatedPlayer) {
             // Process jumping for the AnimatedPlayer
             AnimatedPlayer animatedPlayer = ((AnimatedPlayer) player);
-            animatedPlayer.tryJump(50);
+            animatedPlayer.tryJump(20);
         } else {
             // Otherwise, just set the position normally?
         }
