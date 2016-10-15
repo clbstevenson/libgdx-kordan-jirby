@@ -1,5 +1,6 @@
 package com.exovum.test.animation;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.math.Vector2;
 
@@ -72,13 +73,19 @@ class AnimatedPlayer extends AnimatedSprite {
         // If the player is jumping, update position based on velocity
         // Velocity is also updated based on acceleration
         if(jumping) {
-            if(getY() >= startPos.y) {
-                setY(getY() + velocity.getY());
-                updateVelocityY(acceleration.getY());
+            if(velocity.y > 0) {
+                setY(getY() + velocity.y);
+                updateVelocityY(acceleration.y);
             } else {
-                // once return to starting point, then stop jumping and reset to startPos.y
-                setY(startPos.y);
-                jumping = false;
+                if(getY() > startPos.y) {
+                    setY(getY() + velocity.y);
+                    updateVelocityY(acceleration.y);
+                } else {
+                    // once return to starting point, then stop jumping and reset to startPos.y
+                    setY(startPos.y);
+                    velocity.y = 0;
+                    jumping = false;
+                }
             }
         }
     }
@@ -92,6 +99,7 @@ class AnimatedPlayer extends AnimatedSprite {
             } else {
                 // once return to starting point, then stop jumping and reset to startPos.y value
                 setY(startPos.y);
+                velocity.y = 0;
                 jumping = false;
             }
         }

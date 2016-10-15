@@ -49,33 +49,11 @@ public class AnimatorGestureListener implements GestureDetector.GestureListener 
             // Otherwise, just set the position normally?
         }
 
-        /*
-        for(Sprite s: sprites) {
-            if(s instanceof AnimatedPlayer) {
-                // Process jumping for the AnimatedPlayer
-                AnimatedPlayer animatedPlayer = ((AnimatedPlayer) s);
-                animatedPlayer.tryJump(20);
-            } else {
-                // Otherwise, just set the position normally?
-            }
-        }
-        */
-
         return true;
     }
 
     @Override
     public boolean longPress(float x, float y) {
-        //TODO: jump higher
-        /*
-        if(player instanceof AnimatedPlayer) {
-            // Process jumping for the AnimatedPlayer
-            AnimatedPlayer animatedPlayer = ((AnimatedPlayer) player);
-            animatedPlayer.setVelocityX(animatedPlayer.getVelocityX() + 1);
-        } else {
-            // Otherwise, just set the position normally?
-        }
-        */
         return false;
     }
 
@@ -88,7 +66,15 @@ public class AnimatorGestureListener implements GestureDetector.GestureListener 
             // Convert the fling velocityY to an appropriate jump speed
             // The negation is there because fling from "up" is negative y-value , and
             // "down" is a positive y-value
-            float convertedJumpSpeed = velocityY /  -100;
+            float convertedJumpSpeed = velocityY /  -500;
+            // Only bother with swipe "ups", or positive y-velocities
+            if(convertedJumpSpeed < 0)
+                convertedJumpSpeed = 0;
+            // do some integer conversion for removing non-regular values, and base jump value is 20
+            convertedJumpSpeed = ((int) convertedJumpSpeed) * 2  + 20;
+            Gdx.app.log("AnimatorGestureListener", "convertedJumpSpeed: " + convertedJumpSpeed);
+            convertedJumpSpeed = Math.min(convertedJumpSpeed, 35);
+            Gdx.app.log("AnimatorGestureListener", "min convertedJumpSpeed: " + convertedJumpSpeed);
             animatedPlayer.tryJump(convertedJumpSpeed);
         } else {
             // Otherwise, just set the position normally?
