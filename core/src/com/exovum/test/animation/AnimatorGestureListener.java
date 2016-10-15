@@ -3,6 +3,7 @@ package com.exovum.test.animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 
 /**
  * Created by exovu_000 on 10/15/2016.
@@ -11,10 +12,25 @@ import com.badlogic.gdx.math.Vector2;
 
 public class AnimatorGestureListener implements GestureDetector.GestureListener {
 
-    private Sprite sprite;
+    // Array of all sprites to track gesture handling for
+    private Array<Sprite> sprites;
+    private Sprite player;
+
+    public AnimatorGestureListener() {
+        sprites = new Array<Sprite>();
+    }
 
     public AnimatorGestureListener(Sprite sprite) {
-        this.sprite = sprite;
+        sprites = new Array<Sprite>();
+        player = sprite;
+    }
+
+    public void addSprite(Sprite sprite) {
+        sprites.add(sprite);
+    }
+
+    public void removeSprite(Sprite sprite) {
+        sprites.removeValue(sprite, false);
     }
 
     @Override
@@ -24,6 +40,25 @@ public class AnimatorGestureListener implements GestureDetector.GestureListener 
 
     @Override
     public boolean tap(float x, float y, int count, int button) {
+        if(player instanceof AnimatedPlayer) {
+            // Process jumping for the AnimatedPlayer
+            AnimatedPlayer animatedPlayer = ((AnimatedPlayer) player);
+            animatedPlayer.tryJump(50);
+        } else {
+            // Otherwise, just set the position normally?
+        }
+
+        /*
+        for(Sprite s: sprites) {
+            if(s instanceof AnimatedPlayer) {
+                // Process jumping for the AnimatedPlayer
+                AnimatedPlayer animatedPlayer = ((AnimatedPlayer) s);
+                animatedPlayer.tryJump(20);
+            } else {
+                // Otherwise, just set the position normally?
+            }
+        }
+        */
 
         return true;
     }

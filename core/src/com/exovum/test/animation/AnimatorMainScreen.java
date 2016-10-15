@@ -46,7 +46,7 @@ public class AnimatorMainScreen implements Screen {
     private TextureAtlas atlas;
 
     Animation jkirbyAnimation;
-    AnimatedSprite jkirbyAnimatedSprite;
+    AnimatedPlayer jkirbyAnimatedSprite;
 
     // The two Sprites for the map are used to "loop" the map as the player runs
     private Sprite mapSprite, mapSprite2;
@@ -62,10 +62,6 @@ public class AnimatorMainScreen implements Screen {
 
     public AnimatorMainScreen(SpriteBatch batch) {
         this.batch = batch;
-
-
-        // Setup the AnimatorGestureListener for handling input
-        Gdx.input.setInputProcessor(new GestureDetector(new AnimatorGestureListener()));
 
         float w = Gdx.graphics.getWidth();
         float h = Gdx.graphics.getHeight();
@@ -118,15 +114,22 @@ public class AnimatorMainScreen implements Screen {
         jkirbyAnimation = new Animation(0.025f, jkirbyFrames);
         jkirbyAnimation.setPlayMode(Animation.PlayMode.LOOP);
         // Create an AnimatedSprite, which contains the Animation and Sprite information
-        jkirbyAnimatedSprite = new AnimatedSprite(jkirbyAnimation);
+        //jkirbyAnimatedSprite = new AnimatedSprite(jkirbyAnimation);
+        jkirbyAnimatedSprite = new AnimatedPlayer(jkirbyAnimation, moveSpeed);
         jkirbyAnimatedSprite.play();
         //jkirbyAnimatedSprite.setPosition(-250, floorPos);
         jkirbyAnimatedSprite.setPosition(-1 * viewport.getScreenWidth() / 2 + jkirbyAnimatedSprite.getWidth(),
                 floorPos);
         //jkirbyAnimatedSprite.setSize(2,3);
 
+        // Add jkirbyAnimatedPlayer to the GestureListener's array of sprites
+
         shortTree = new Sprite(new Texture(Gdx.files.internal("flat-tree-game-ornaments/tree-1.png")));
         tallTree = new Sprite(new Texture(Gdx.files.internal("flat-tree-game-ornaments/tree-2.png")));
+
+        // Setup the AnimatorGestureListener for handling input
+        Gdx.input.setInputProcessor(new GestureDetector(
+                new AnimatorGestureListener(jkirbyAnimatedSprite)));
     }
 
     @Override
@@ -134,12 +137,13 @@ public class AnimatorMainScreen implements Screen {
         handleInput();
         // auto-move the background left, so the animation to the left [based on moveSpeed]
         camera.translate(
-                moveSpeed, 0, 0);
+                jkirbyAnimatedSprite.getVelocityX(), 0, 0);
         // Move the player animation with the camera [based on moveSpeed]
-        jkirbyAnimatedSprite.setPosition(jkirbyAnimatedSprite.getX() + moveSpeed,
-                jkirbyAnimatedSprite.getY());
+        //jkirbyAnimatedSprite.setPosition(jkirbyAnimatedSprite.getX() + moveSpeed,
+        //        jkirbyAnimatedSprite.getY());
+        jkirbyAnimatedSprite.update();
         // Increment distanceTraveled based on moveSpeed
-        distanceTraveled += moveSpeed;
+        distanceTraveled += jkirbyAnimatedSprite.getVelocityX();
         camera.update();
         batch.setProjectionMatrix(camera.combined);
 

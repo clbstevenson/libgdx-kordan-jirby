@@ -17,24 +17,28 @@ public class AnimatedPlayer extends AnimatedSprite {
     // NOTE: I suppose this could be checked via (vel.x/vel.y > 0), but the boolean may be simpler
     private boolean jumping;
 
+    // Once the player has jumped, store the initial jump position so it can be reset later
+    private Vector2f startPos;
     // A vector containing AnimatedPlayer's x- and y-direction velocities
     private Vector2f velocity;
     // A vector containing AnimatedPlayer's x- and y-direction acceleration
     private Vector2f acceleration;
 
-    public AnimatedPlayer(Animation animation) {
+    public AnimatedPlayer(Animation animation, float moveSpeed) {
         super(animation);
-        initVelocity();
+        initVelocity(moveSpeed);
     }
 
-    public AnimatedPlayer(Animation animation, boolean keepSize) {
+    public AnimatedPlayer(Animation animation, boolean keepSize, float moveSpeed) {
         super(animation, keepSize);
-        initVelocity();
+        initVelocity(moveSpeed);
     }
 
-    private void initVelocity() {
-        // Initial velocity is 0 x-direction and 0 y-direction
-        velocity = new Vector2f(0, 0);
+    private void initVelocity(float moveSpeed) {
+        // Initial startPos is the current position of the sprite; update when tryJump()
+        startPos = new Vector2f(getX(), getY());
+        // Initial velocity is moveSpeed as x-direction and 0 y-direction
+        velocity = new Vector2f(moveSpeed, 0);
         // Initial acceleration is 0 y-direction and -10 y-direction ('gravity')
         acceleration = new Vector2f(0, -10);
     }
@@ -42,12 +46,24 @@ public class AnimatedPlayer extends AnimatedSprite {
     @Override
     public void update() {
         super.update();
-        jumpUpdate();
+        moveUpdate();
     }
 
     @Override
     public void update(float delta) {
         super.update(delta);
+        jumpUpdate(delta);
+    }
+
+    // Update player's position based on velocity
+    private void moveUpdate() {
+        setX(getX() + getVelocityX());
+        jumpUpdate();
+    }
+
+    // Update player's position based on velocity using delta as time-passed
+    private void moveUpdate(float delta) {
+        setX((getX() + getVelocityX()) * delta);
         jumpUpdate(delta);
     }
 
@@ -69,15 +85,23 @@ public class AnimatedPlayer extends AnimatedSprite {
         // If the player is jumping, update position based on velocity
         // Velocity is also updated based on acceleration
         if(jumping) {
-            if(getY() >= 0) {
+            if(getY() >= startPos.getY()) {
                 setY((getY() + velocity.getY()) * delta);
                 updateVelocityY(acceleration.getY() * delta);
             } else {
-                // once return to starting point, then stop jumping
-                setY(0);
+                // once return to starting point, then stop jumping and reset to startPos.y value
+                resetPosition();
                 jumping = false;
             }
         }
+    }
+
+    public void setStartPos(float x, float y) {
+        startPos.set(x, y);
+    }
+    public void resetPosition() {
+        // only reset y-position because x-position will be off screen
+        this.setY(startPos.getY());
     }
 
     //Setters for velocity
@@ -140,6 +164,7 @@ public class AnimatedPlayer extends AnimatedSprite {
     public void tryJump(float y) {
         // if not already jumping, set velocity to given value
         if(!jumping) {
+            setStartPos(getX(), getY());
             setVelocityY(y);
             jumping = true;
         }
