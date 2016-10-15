@@ -2,6 +2,7 @@ package com.exovum.test.animation;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -12,6 +13,8 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -25,8 +28,10 @@ public class AnimatorMainScreen implements Screen {
     static final int WORLD_WIDTH = 100;
     static final int WORLD_HEIGHT = 100;
 
-    private BitmapFont font;
+    private BitmapFont font, font2;
     private GlyphLayout glyphLayout;
+    private FreeTypeFontParameter parameter;
+    private FreeTypeFontGenerator generator;
 
     private Viewport viewport;
     private OrthographicCamera camera;
@@ -62,8 +67,14 @@ public class AnimatorMainScreen implements Screen {
         // Initialize the player's distance traveled to 0; accumulates based on moveSpeed
         distanceTraveled = 0;
 
-        font = new BitmapFont(Gdx.files.internal("fonts/boxy_bold_font.png"));
+        //font = new BitmapFont(Gdx.files.internal("fonts/boxy_bold_font.png"));
         glyphLayout = new GlyphLayout();
+        generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Boxy-Bold.ttf"));
+        parameter = new FreeTypeFontParameter();
+        parameter.size = 32;
+        font = generator.generateFont(parameter); // font size of 12 pizels
+        font.setColor(Color.BLACK);
+        font2 = new BitmapFont();
 
         // Constructs a new OrthographicCamera, using the given viewport width and height
         // Height is multiplied by aspect ratio.
@@ -132,9 +143,11 @@ public class AnimatorMainScreen implements Screen {
         mapSprite.draw(batch);
         mapSprite2.draw(batch);
         // Display the distance traveled so far
-        glyphLayout.setText(font, "Distance: " + distanceTraveled);
+        //glyphLayout.setText(font, "Distance: " + distanceTraveled);
         // draw it at the top-middle of the screen
-        font.draw(batch, glyphLayout, 0 - glyphLayout.width / 2, viewport.getScreenHeight() / 2);
+        //font.draw(batch, glyphLayout, 0, 0);
+        font.draw(batch, "Font 1", 0, 0);
+        //font2.draw(batch, "Font 2", 0, 0);
 
         if(displayMap1) {
             // check if switching from mapSprite to mapSprite2
@@ -206,6 +219,9 @@ public class AnimatorMainScreen implements Screen {
         shortTree.getTexture().dispose();
         tallTree.getTexture().dispose();
         jkirbyAnimatedSprite.getTexture().dispose();
+        font.dispose();
+        generator.dispose();
+        font2.dispose();
         batch.dispose();
     }
 }
