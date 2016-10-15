@@ -5,6 +5,7 @@ import android.os.Bundle;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.exovum.test.animation.AnimatorTestGame;
+import com.exovum.test.animation.GestureDetectorTest;
 import com.exovum.test.animation.OrthographicCameraExample;
 
 public class AndroidLauncher extends AndroidApplication {
@@ -19,6 +20,7 @@ public class AndroidLauncher extends AndroidApplication {
         //Animator: Jordan Kirby running simulator
         //initialize(new AnimatorTest(), config);
         initialize(new AnimatorTestGame(), config);
+        //initialize(new GestureDetectorTest(), config);
         //initialize(new OrthographicCameraExample(), config);
 	}
 }

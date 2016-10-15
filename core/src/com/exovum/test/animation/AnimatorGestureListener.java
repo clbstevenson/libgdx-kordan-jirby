@@ -1,5 +1,6 @@
 package com.exovum.test.animation;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector2;
@@ -66,12 +67,33 @@ public class AnimatorGestureListener implements GestureDetector.GestureListener 
     @Override
     public boolean longPress(float x, float y) {
         //TODO: jump higher
+        /*
+        if(player instanceof AnimatedPlayer) {
+            // Process jumping for the AnimatedPlayer
+            AnimatedPlayer animatedPlayer = ((AnimatedPlayer) player);
+            animatedPlayer.setVelocityX(animatedPlayer.getVelocityX() + 1);
+        } else {
+            // Otherwise, just set the position normally?
+        }
+        */
         return false;
     }
 
     @Override
     public boolean fling(float velocityX, float velocityY, int button) {
-        return false;
+        Gdx.app.log("GestureDetectorTest", "fling " + velocityX + ", " + velocityY);
+        if(player instanceof AnimatedPlayer) {
+            // Process jumping for the AnimatedPlayer
+            AnimatedPlayer animatedPlayer = ((AnimatedPlayer) player);
+            // Convert the fling velocityY to an appropriate jump speed
+            // The negation is there because fling from "up" is negative y-value , and
+            // "down" is a positive y-value
+            float convertedJumpSpeed = velocityY /  -100;
+            animatedPlayer.tryJump(convertedJumpSpeed);
+        } else {
+            // Otherwise, just set the position normally?
+        }
+        return true;
     }
 
     @Override

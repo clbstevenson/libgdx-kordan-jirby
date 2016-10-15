@@ -160,6 +160,9 @@ public class AnimatorMainScreen implements Screen {
         // Draw the distance at the top-middle of the screen
         font.draw(batch, glyphLayout, camera.position.x - glyphLayout.width / 2,
                 camera.viewportHeight / 2);
+        glyphLayout.setText(font, jkirbyAnimatedSprite.getVelocity().toString());
+        font.draw(batch, glyphLayout, camera.position.x - glyphLayout.width / 2,
+                camera.viewportHeight / 2 - 50);
         //font.draw(batch, "Distance: " + distanceTraveled, camera.position.x,
         //        camera.viewportHeight / 2);
 
