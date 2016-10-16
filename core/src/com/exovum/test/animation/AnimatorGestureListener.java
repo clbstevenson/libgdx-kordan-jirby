@@ -41,14 +41,18 @@ public class AnimatorGestureListener implements GestureDetector.GestureListener 
 
     @Override
     public boolean tap(float x, float y, int count, int button) {
-        if(player instanceof AnimatedPlayer) {
-            // Process jumping for the AnimatedPlayer
+        if (player instanceof AnimatedPlayer) {
             AnimatedPlayer animatedPlayer = ((AnimatedPlayer) player);
-            animatedPlayer.tryJump(17);
+            if(animatedPlayer.hasLost()) {
+
+            } else {
+                // Process jumping for the AnimatedPlayer
+                animatedPlayer.tryJump(17);
+            }
+
         } else {
             // Otherwise, just set the position normally?
         }
-
         return true;
     }
 

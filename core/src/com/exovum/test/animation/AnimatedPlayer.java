@@ -17,6 +17,8 @@ class AnimatedPlayer extends AnimatedSprite {
     // A flag to determine if the AnimatedPlayer is currently jumping
     // NOTE: I suppose this could be checked via (vel.x/vel.y > 0), but the boolean may be simpler
     private boolean jumping;
+    // A flag to determine if the player is on the "you lost" screen
+    private boolean lost;
 
     // Once the player has jumped, store the initial jump position so it can be reset later
     private Vector2f startPos;
@@ -185,6 +187,10 @@ class AnimatedPlayer extends AnimatedSprite {
         return acceleration.getY();
     }
 
+    public boolean hasLost() {
+        return lost;
+    }
+
     // Try to jump using the given y-velocity
     void tryJump(float y) {
         // if not already jumping, set velocity to given value
@@ -197,6 +203,5 @@ class AnimatedPlayer extends AnimatedSprite {
         }
         // otherwise, do nothing
     }
-
 
 }
