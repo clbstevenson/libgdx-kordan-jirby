@@ -81,7 +81,7 @@ public class AnimatorMainScreen implements Screen {
         // Set the floor to be 100 below the middle of the screen
         floorPos = -150;
         // Set the initial movement speed of camera/player [can be changed later]
-        moveSpeed = 5;
+        moveSpeed = 4;
         // Initialize the player's distance traveled to 0; accumulates based on moveSpeed
         distanceTraveled = 0;
 
@@ -138,14 +138,18 @@ public class AnimatorMainScreen implements Screen {
 
         shortTree = new TrapSprite(new Texture(Gdx.files.internal("flat-tree-game-ornaments/tree-1.png")));
         shortTree.setPosition(camera.viewportWidth, floorPos);
-        shortTree.setSize(50, 50);
+        shortTree.setSize(35, 40);
         tallTree = new TrapSprite(new Texture(Gdx.files.internal("flat-tree-game-ornaments/tree-2.png")));
-        tallTree.setSize(50, 100);
-        tallTree.setPosition(shortTree.getX() + ((float)Math.random()) * 20 + 100, floorPos);
+        tallTree.setSize(50, 80);
+        //tallTree.setPosition(shortTree.getX() + ((float)Math.random()) * 20 + 500, floorPos);
 
         traps = new Array<>();
+        //tallTree.setPosition(shortTree.getX() + ((float)Math.random()) * 20 + 500, floorPos);
         addTrap(shortTree);
+        tallTree.setPosition(nextTrapSlot(), floorPos);
         addTrap(tallTree);
+        //addTrap(new TrapSprite(shortTree.getTexture(), nextTrapSlotFrom(traps.get(traps.size -1)),
+        //        (int)floorPos, 35, 50));
 
         // Setup the InputProcessors
         // Use a multiplexer to handle multiple InputProcessors for different events
@@ -160,8 +164,6 @@ public class AnimatorMainScreen implements Screen {
                     //camera.lookAt(0, 0, 0);
                     //camera.lookAt();
                     reset();
-
-                    resetBetter();
                 }
                 return true;
             }
@@ -192,9 +194,6 @@ public class AnimatorMainScreen implements Screen {
         camera.update();
         //viewport.update(800, 480);
 
-
-
-
         //batch.flush();
         // reset the camera location
         //camera.lookAt(0, 0, 0);
@@ -223,16 +222,17 @@ public class AnimatorMainScreen implements Screen {
 
         // Reset the traps
         traps.clear();
+        Gdx.app.log("AnimatorMainScreen", "traps size: " + traps.size);
         shortTree.setPosition(camera.viewportWidth, floorPos);
-        shortTree.setSize(50, 50);
-        tallTree.setSize(50, 100);
-        tallTree.setPosition(shortTree.getX() + ((float)Math.random()) * 20 + 100, floorPos);
+        shortTree.setSize(35, 40);
+        tallTree.setSize(50, 80);
+        //tallTree.setPosition(shortTree.getX() + ((float)Math.random()) * 20 + 500, floorPos);
+        tallTree.setPosition(nextTrapSlotFrom(shortTree), floorPos);
         addTrap(shortTree);
         addTrap(tallTree);
+        //addTrap(new TrapSprite(shortTree.getTexture(), nextTrapSlotFrom(traps.get(traps.size -1)),
+         //       (int)floorPos, 35, 50));
 
-    }
-
-    public void resetBetter() {
 
     }
 
@@ -316,13 +316,21 @@ public class AnimatorMainScreen implements Screen {
                 currentMap = mapSprite;
             }
         }
-        shortTree.draw(batch);
-        tallTree.draw(batch);
+        //shortTree.draw(batch);
+        //tallTree.draw(batch);
         jkirbyAnimatedSprite.draw(batch);
 
-        if(!paused) {
-            Rectangle jkirbyRectangle = jkirbyAnimatedSprite.getBoundingRectangle();
-            for (TrapSprite s : traps) {
+        // Based on how far the player goes and how close they are to the furthest trap,
+        // add a new trap
+        int nextTrapPos = nextTrapSlot();
+        if(distanceTraveled < nextTrapPos / 2) {
+            addRandomTrapAtPos(nextTrapPos);
+        }
+
+        Rectangle jkirbyRectangle = jkirbyAnimatedSprite.getBoundingRectangle();
+        for (TrapSprite s : traps) {
+            s.draw(batch);
+            if(!paused) {
                 // if the trap is in the current map, check for collision
                 if (currentMap.getBoundingRectangle().contains(s.getX(), s.getY())) {
                     //Gdx.app.log("AnimatorMainScreen", "current map contains trap");
@@ -345,9 +353,34 @@ public class AnimatorMainScreen implements Screen {
         //TODO: handle touch/gesture events [touchDown to jump higher]
     }
 
+    private void addRandomTrapAtPos(int trapPos) {
+        int randomValue = (int) Math.random() * 2;
+        switch(randomValue) {
+            case 0:
+                addTrap(new TrapSprite(new Texture(Gdx.files.internal("flat-tree-game-ornaments/tree-1.png")),
+                        trapPos, (int)floorPos, 35, 40));
+                break;
+            case 1:
+                addTrap(new TrapSprite(new Texture(Gdx.files.internal("flat-tree-game-ornaments/tree-2.png")),
+                        trapPos, (int)floorPos, 50, 80));
+                break;
+        }
+    }
+
     private void addTrap(TrapSprite trap) {
         trap.dispose = false;
         traps.add(trap);
+    }
+
+    // Returns the next valid position for a trap based on the last trap in the Array of traps
+    private int nextTrapSlot() {
+        return nextTrapSlotFrom(traps.get(traps.size - 1));
+    }
+
+    // Returns the next valid position for a trap based on the given Trap's location
+    private int nextTrapSlotFrom(TrapSprite trap) {
+        float randomDist = ((float)Math.random()) * (2000 / jkirbyAnimatedSprite.getVelocityX());
+        return (int)(trap.getX() + trap.getWidth() + 400 + randomDist);
     }
 
     @Override
@@ -386,6 +419,9 @@ public class AnimatorMainScreen implements Screen {
         mapSprite2.getTexture().dispose();
         shortTree.getTexture().dispose();
         tallTree.getTexture().dispose();
+        for(Sprite s: traps) {
+            s.getTexture().dispose();
+        }
         jkirbyAnimatedSprite.getTexture().dispose();
         font.dispose();
         generator.dispose();

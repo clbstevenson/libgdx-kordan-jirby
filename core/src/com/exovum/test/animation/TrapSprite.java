@@ -22,4 +22,8 @@ public class TrapSprite extends Sprite {
         super(texture, srcWidth, srcHeight);
     }
 
+    public TrapSprite (Texture texture, int srcX, int srcY, int srcWidth, int srcHeight) {
+        super(texture, srcX, srcY, srcWidth, srcHeight);
+    }
+
 }
