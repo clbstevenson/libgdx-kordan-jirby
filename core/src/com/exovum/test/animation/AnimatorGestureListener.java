@@ -41,6 +41,7 @@ public class AnimatorGestureListener implements GestureDetector.GestureListener 
 
     @Override
     public boolean tap(float x, float y, int count, int button) {
+        Gdx.app.log("AnimatorGestureListener", "tap from 1st GestureDetector");
         if (player instanceof AnimatedPlayer) {
             AnimatedPlayer animatedPlayer = ((AnimatedPlayer) player);
             if(animatedPlayer.isLost()) {

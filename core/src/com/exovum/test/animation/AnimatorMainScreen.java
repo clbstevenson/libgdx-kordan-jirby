@@ -20,6 +20,7 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFont
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.PooledLinkedList;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -154,11 +155,75 @@ public class AnimatorMainScreen implements Screen {
         // Setup the InputProcessors
         // Use a multiplexer to handle multiple InputProcessors for different events
         InputMultiplexer multiplexer = new InputMultiplexer();
+        multiplexer.addProcessor(new GestureDetector(new GestureListener() {
+            @Override
+            public boolean touchDown(float x, float y, int pointer, int button) {
+                return false;
+            }
+
+            @Override
+            public boolean tap(float x, float y, int count, int button) {
+                if (paused) {
+                    // If the game is paused, then unpause
+                    Gdx.app.log("AnimatorMainScreen", "tap from 2nd GestureDetector ");
+                    paused = false;
+                    // Resume the player's movement and animation
+                    jkirbyAnimatedSprite.play();
+                    //camera.lookAt(0, 0, 0);
+                    //camera.lookAt();
+                    // If the game is paused AND the player has lost, then reset everthing
+                    if (jkirbyAnimatedSprite.isLost()) {
+                        reset();
+                        return true;
+                    }
+                    // else: player has not lost yet, so continue their same run without resetting
+                    return true;
+                }
+                return false;
+            }
+
+            @Override
+            public boolean longPress(float x, float y) {
+                return false;
+            }
+
+            @Override
+            public boolean fling(float velocityX, float velocityY, int button) {
+                return false;
+            }
+
+            @Override
+            public boolean pan(float x, float y, float deltaX, float deltaY) {
+                return false;
+            }
+
+            @Override
+            public boolean panStop(float x, float y, int pointer, int button) {
+                return false;
+            }
+
+            @Override
+            public boolean zoom(float initialDistance, float distance) {
+                return false;
+            }
+
+            @Override
+            public boolean pinch(Vector2 initialPointer1, Vector2 initialPointer2, Vector2 pointer1, Vector2 pointer2) {
+                return false;
+            }
+
+            @Override
+            public void pinchStop() {
+
+            }
+        }));
         multiplexer.addProcessor(new GestureDetector(new AnimatorGestureListener(jkirbyAnimatedSprite)));
+
         multiplexer.addProcessor(new InputAdapter() {
             @Override
-            public boolean touchDown (int x, int y, int pointer, int button) {
-                if(paused) {
+            public boolean touchDown(int x, int y, int pointer, int button) {
+                /*
+                if (paused) {
                     // If the game is paused, then unpause
                     Gdx.app.log("AnimatorMainScreen", "touchDown from multiplexer");
                     paused = false;
@@ -167,16 +232,18 @@ public class AnimatorMainScreen implements Screen {
                     //camera.lookAt(0, 0, 0);
                     //camera.lookAt();
                     // If the game is paused AND the player has lost, then reset everthing
-                    if(jkirbyAnimatedSprite.isLost()) {
+                    if (jkirbyAnimatedSprite.isLost()) {
                         reset();
                     }
                     // else: player has not lost yet, so continue their same run without resetting
                 }
                 return true;
+                */
+                return false;
             }
 
             @Override
-            public boolean touchUp (int x, int y, int pointer, int button) {
+            public boolean touchUp(int x, int y, int pointer, int button) {
                 return false;
             }
         });
@@ -412,7 +479,7 @@ public class AnimatorMainScreen implements Screen {
     private int nextTrapSlotFrom(TrapSprite trap) {
         float randomDist = ((float)Math.random()) * (2000 / jkirbyAnimatedSprite.getVelocityX());
         int nextSlot = (int)(trap.getX() + trap.getWidth() + 400 + randomDist);
-        Gdx.app.log("AnimatorMainScreen", "nextTrapSlotFrom() = " + nextSlot);
+        //Gdx.app.log("AnimatorMainScreen", "nextTrapSlotFrom() = " + nextSlot);
         return nextSlot;
     }
 
@@ -438,8 +505,9 @@ public class AnimatorMainScreen implements Screen {
 
     @Override
     public void resume() {
-        paused = false;
-        jkirbyAnimatedSprite.play();
+        //paused = false;
+        //jkirbyAnimatedSprite.play();
+        // TODO: instead of auto-resuming, resume when the screen is tapped
     }
 
     @Override
