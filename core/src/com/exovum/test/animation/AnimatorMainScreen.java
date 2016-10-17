@@ -220,6 +220,21 @@ public class AnimatorMainScreen implements Screen {
         multiplexer.addProcessor(new GestureDetector(new AnimatorGestureListener(jkirbyAnimatedSprite)));
 
         multiplexer.addProcessor(new InputAdapter() {
+
+            @Override
+            public boolean keyTyped(char character) {
+                switch(character) {
+                    case 'r':
+                        // If you press 'r', reset everything
+                        reset();
+                        // Pause the game and AnimatedPlayer so you have to press the screen to start
+                        paused = true;
+                        jkirbyAnimatedSprite.pause();
+                        return true;
+
+                };
+                return false;
+            }
             @Override
             public boolean touchDown(int x, int y, int pointer, int button) {
                 /*
@@ -343,47 +358,8 @@ public class AnimatorMainScreen implements Screen {
             // Game is paused
         }
 
-        Gdx.gl.glClearColor(0.0f, 0.0f, 0.0f, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        camera.update();
-        batch.setProjectionMatrix(camera.combined);
-        // Begin SpriteBatch rendering
-        batch.begin();
-        mapSprite.draw(batch);
-        mapSprite2.draw(batch);
-        // Display the distance traveled so far
-        // Use glyphlayout so it is easier to find the middle of the displayed text
-        glyphLayout.setText(font, "" + (int) distanceTraveled);
-        // Draw the distance at the top-middle of the screen
-        font.draw(batch, glyphLayout, camera.position.x - glyphLayout.width / 2,
-                camera.viewportHeight / 2);
-        // Draw the number of TrapSprites in the traps Array
-        glyphLayout.setText(font, traps.size + " TrapSprites");
-        font.draw(batch, glyphLayout, camera.position.x - glyphLayout.width / 2,
-                0);
-
-
-        if(paused) {
-            // paused, so don't move camera or player but draw some text
-            glyphLayout.setText(font, "Press the screen to continue!");
-            font.draw(batch, glyphLayout, camera.position.x - glyphLayout.width / 2,
-                    camera.viewportHeight / 2 - glyphLayout.height * 6);
-            // If the player has lost, then display the losing text
-            if(jkirbyAnimatedSprite.isLost()) {
-                glyphLayout.setText(font, "Such disappoint. Much fail. Wow.");
-                font.draw(batch, glyphLayout, camera.position.x - glyphLayout.width / 2,
-                        camera.viewportHeight / 2 - glyphLayout.height * 4);
-            }
-
-        }
-
-        //glyphLayout.setText(font, jkirbyAnimatedSprite.getVelocity().toString());
-        //font.draw(batch, glyphLayout, camera.position.x - glyphLayout.width / 2,
-        //        camera.viewportHeight / 2 - 50);
-        //font.draw(batch, "Distance: " + distanceTraveled, camera.position.x,
-        //        camera.viewportHeight / 2);
-
+        // Determine which map is currently displayed, switch currentMap to that map,
+        // and then draw the old map after the other new currentMap
         if (displayMap1) {
             // check if switching from mapSprite to mapSprite2
             // plus (sprite.width * 3) so map1 isn't visible when it disappears
@@ -409,20 +385,21 @@ public class AnimatorMainScreen implements Screen {
                 currentMap = mapSprite;
             }
         }
-        //shortTree.draw(batch);
-        //tallTree.draw(batch);
-        jkirbyAnimatedSprite.draw(batch);
 
         // Based on how far the player goes and how close they are to the furthest trap,
         // add a new trap
+        // TODO: Fix this! It continuously spawns after a collision, and player collides with nothing.
         int nextTrapPos = nextTrapSlot();
         if(distanceTraveled < nextTrapPos / 2) {
-            addRandomTrapAtPos(nextTrapPos);
+            //addRandomTrapAtPos(nextTrapPos);
         }
 
+        // For every single trap still in play on the currentMap,
+        // check if the player has collided with the trap.
+        // If they collide, pause the game and player, and the player has now lost.
         Rectangle jkirbyRectangle = jkirbyAnimatedSprite.getBoundingRectangle();
         for (TrapSprite s : traps) {
-            s.draw(batch);
+            //s.draw(batch);
             if(!paused) {
                 // if the trap is in the current map, check for collision
                 if (currentMap.getBoundingRectangle().contains(s.getX(), s.getY())) {
@@ -438,6 +415,58 @@ public class AnimatorMainScreen implements Screen {
                 }
             }
         }
+
+        Gdx.gl.glClearColor(0.0f, 0.0f, 0.0f, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        camera.update();
+        batch.setProjectionMatrix(camera.combined);
+
+        /*
+         Begin SpriteBatch rendering
+          */
+        batch.begin();
+        mapSprite.draw(batch);
+        mapSprite2.draw(batch);
+        // Display the distance traveled so far
+        // Use glyphlayout so it is easier to find the middle of the displayed text
+        glyphLayout.setText(font, "" + (int) distanceTraveled);
+        // Draw the distance at the top-middle of the screen
+        font.draw(batch, glyphLayout, camera.position.x - glyphLayout.width / 2,
+                camera.viewportHeight / 2);
+        // Draw the number of TrapSprites in the traps Array
+        glyphLayout.setText(font, traps.size + " TrapSprites");
+        font.draw(batch, glyphLayout, camera.position.x - glyphLayout.width / 2,
+                0);
+
+
+        // Display some text when the game is paused
+        if(paused) {
+            // paused, so don't move camera or player but draw some text
+            glyphLayout.setText(font, "Press the screen to continue!");
+            font.draw(batch, glyphLayout, camera.position.x - glyphLayout.width / 2,
+                    camera.viewportHeight / 2 - glyphLayout.height * 6);
+            // If the player has lost, then display the losing text
+            if(jkirbyAnimatedSprite.isLost()) {
+                glyphLayout.setText(font, "Such disappoint. Much fail. Wow.");
+                font.draw(batch, glyphLayout, camera.position.x - glyphLayout.width / 2,
+                        camera.viewportHeight / 2 - glyphLayout.height * 4);
+            }
+
+        }
+
+
+        // Render all of the traps
+        for(TrapSprite trap: traps) {
+            trap.draw(batch);
+        }
+        //shortTree.draw(batch);
+        //tallTree.draw(batch);
+
+        // Draw the current frame of the AnimatedPlayer sprite
+        jkirbyAnimatedSprite.draw(batch);
+
+
         // End SpriteBatch rendering
         batch.end();
     }
@@ -446,8 +475,8 @@ public class AnimatorMainScreen implements Screen {
     }
 
     private void addRandomTrapAtPos(int trapPos) {
-        int randomValue = (int) Math.random() * 2;
-        Gdx.app.log("AnimatorMainScreen", "addRanomTrap: randomValue = " + randomValue);
+        int randomValue = (int) Math.random() ;
+        Gdx.app.log("AnimatorMainScreen", "addRandomTrap: randomValue = " + randomValue);
         switch(randomValue) {
             case 0:
                 Gdx.app.log("AnimatorMainScreen", "addRandomTrap: tree-1 at " + trapPos);
