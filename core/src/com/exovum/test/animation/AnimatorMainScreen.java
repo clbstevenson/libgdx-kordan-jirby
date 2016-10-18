@@ -44,7 +44,7 @@ public class AnimatorMainScreen implements Screen {
     static final int WORLD_WIDTH = 100;
     static final int WORLD_HEIGHT = 100;
 
-    private BitmapFont font;
+    private BitmapFont font, smallFont;
     private GlyphLayout glyphLayout;
     private FreeTypeFontParameter parameter;
     private FreeTypeFontGenerator generator;
@@ -93,6 +93,9 @@ public class AnimatorMainScreen implements Screen {
         parameter.size = 26; // font size
         font = generator.generateFont(parameter); // font size of 12 pizels
         font.setColor(Color.BLACK);
+        parameter.size = 16;
+        smallFont = generator.generateFont(parameter);
+        smallFont.setColor(Color.BLACK);
 
         // Constructs a new OrthographicCamera, using the given viewport width and height
         // Height is multiplied by aspect ratio.
@@ -173,6 +176,7 @@ public class AnimatorMainScreen implements Screen {
                     //camera.lookAt();
                     // If the game is paused AND the player has lost, then reset everthing
                     if (jkirbyAnimatedSprite.isLost()) {
+                        Gdx.app.log("AnimatorMainScreen", "tapping when player has lost to reset");
                         reset();
                         return true;
                     }
@@ -328,7 +332,9 @@ public class AnimatorMainScreen implements Screen {
         addTrap(tallTree);
         //addTrap(new TrapSprite(shortTree.getTexture(), nextTrapSlotFrom(traps.get(traps.size -1)),
          //       (int)floorPos, 35, 50));
-
+        for(Sprite s: traps) {
+            s.getTexture().dispose();
+        }
 
     }
 
@@ -389,9 +395,28 @@ public class AnimatorMainScreen implements Screen {
         // Based on how far the player goes and how close they are to the furthest trap,
         // add a new trap
         // TODO: Fix this! It continuously spawns after a collision, and player collides with nothing.
+
         int nextTrapPos = nextTrapSlot();
+
+        /*
+            This would infinitely spawn traps.
+            Value of nextTrapPos would continue to increase so nextTrapPos would almost always
+            be greater than distanceTraveled.
         if(distanceTraveled < nextTrapPos / 2) {
+            addRandomTrapAtPos(nextTrapPos);
+        }
+        */
+
+        // If the difference between nextTrapPos and distanceTraveled is LESS
+        // than the width of the camera viewport, spawn a new trap
+        if(nextTrapPos - distanceTraveled < camera.viewportWidth * 1.5f) {
+        //if(traps.size < 5) {
+            //TrapSprite testTrap = new TrapSprite(new Texture(Gdx.files.internal("flat-tree-game-ornaments/tree-1.png")));
+            //testTrap.setPosition(camera.viewportWidth * 3, floorPos);
+            //testTrap.setSize(35, 40);
+            //addTrap(testTrap);
             //addRandomTrapAtPos(nextTrapPos);
+            addTrapSample(nextTrapPos);
         }
 
         // For every single trap still in play on the currentMap,
@@ -406,7 +431,7 @@ public class AnimatorMainScreen implements Screen {
                     //Gdx.app.log("AnimatorMainScreen", "current map contains trap");
                     //if (jkirbyRectangle.contains(s.getX(), s.getY())) {
                     if (jkirbyRectangle.overlaps(s.getBoundingRectangle())) {
-                        Gdx.app.log("AnimatorMainScreen", "player collided with trap");
+                        Gdx.app.log("AnimatorMainScreen", "player collided with " + s.getType());
                         jkirbyAnimatedSprite.pause();
                         jkirbyAnimatedSprite.setLost(true);
                         jkirbyAnimatedSprite.setVelocity(0, 0);
@@ -438,6 +463,9 @@ public class AnimatorMainScreen implements Screen {
         glyphLayout.setText(font, traps.size + " TrapSprites");
         font.draw(batch, glyphLayout, camera.position.x - glyphLayout.width / 2,
                 0);
+        glyphLayout.setText(font, "Velocity-X: " + jkirbyAnimatedSprite.getVelocityX());
+        font.draw(batch, glyphLayout, camera.position.x - glyphLayout.width / 2,
+                glyphLayout.height);
 
 
         // Display some text when the game is paused
@@ -457,17 +485,30 @@ public class AnimatorMainScreen implements Screen {
 
 
         // Render all of the traps
-        for(TrapSprite trap: traps) {
-            trap.draw(batch);
+        for(int i = 0; i < traps.size; i++) {
+            traps.get(i).draw(batch);
+            glyphLayout.setText(smallFont, "(" + traps.get(i).getX() + "," + traps.get(i).getY() + ")");
+            smallFont.draw(batch, glyphLayout, traps.get(i).getX() - glyphLayout.width/2 + traps.get(i).getWidth() / 2,
+                    traps.get(i).getY() - glyphLayout.height);
         }
+        /*
+        for(TrapSprite trap: traps) {
+            //Gdx.app.log("AnimatorMainScreen", "Drawing trap at " + trap.getX() + ", " + trap.getY());
+            trap.draw(batch);
+            glyphLayout.setText(smallFont, "(" + trap.getX() + "," + trap.getY() + ")");
+            smallFont.draw(batch, glyphLayout, trap.getX() - glyphLayout.width/2 + trap.getWidth() / 2,
+                    trap.getY() - glyphLayout.height);
+        }
+        */
         //shortTree.draw(batch);
         //tallTree.draw(batch);
 
         // Draw the current frame of the AnimatedPlayer sprite
         jkirbyAnimatedSprite.draw(batch);
 
-
-        // End SpriteBatch rendering
+        /*
+         End SpriteBatch rendering
+          */
         batch.end();
     }
 
@@ -477,22 +518,62 @@ public class AnimatorMainScreen implements Screen {
     private void addRandomTrapAtPos(int trapPos) {
         int randomValue = (int) Math.random() ;
         Gdx.app.log("AnimatorMainScreen", "addRandomTrap: randomValue = " + randomValue);
+        TrapSprite newTrap;
         switch(randomValue) {
             case 0:
                 Gdx.app.log("AnimatorMainScreen", "addRandomTrap: tree-1 at " + trapPos);
-                addTrap(new TrapSprite(new Texture(Gdx.files.internal("flat-tree-game-ornaments/tree-1.png")),
-                        trapPos, (int)floorPos, 35, 40));
+                newTrap = new TrapSprite(new Texture(Gdx.files.internal("flat-tree-game-ornaments/tree-1.png")),
+                        trapPos, (int)floorPos, 35, 40);
+                newTrap.setPosition(trapPos, floorPos);
+                newTrap.setSize(35, 40);
+                addTrap(newTrap);
+
+                // Previously, this line caused traps to spawn at (0,0) instead of (trapPos, floorPos)
+                // because the constructor for Sprite does not actually set the position.
+                // In TrapSprite extension of Sprite, method setPosition(x,y) is now called to fix this.
+                //addTrap(new TrapSprite(new Texture(Gdx.files.internal("flat-tree-game-ornaments/tree-1.png")),
+                //        trapPos, (int)floorPos, 35, 40));
+                /*addTrap(new TrapSprite(TrapSprite.TrapType.SHORT,
+                        trapPos, (int)floorPos, 35, 40));*/
                 break;
             case 1:
                 Gdx.app.log("AnimatorMainScreen", "addRandomTrap: tree-2 at " + trapPos);
-                addTrap(new TrapSprite(new Texture(Gdx.files.internal("flat-tree-game-ornaments/tree-2.png")),
-                        trapPos, (int)floorPos, 50, 80));
+                newTrap = new TrapSprite(new Texture(Gdx.files.internal("flat-tree-game-ornaments/tree-2.png")),
+                        trapPos, (int)floorPos, 50, 80);
+                newTrap.setPosition(trapPos, floorPos);
+                newTrap.setSize(50, 80);
+                addTrap(newTrap);
+                //addTrap(new TrapSprite(new Texture(Gdx.files.internal("flat-tree-game-ornaments/tree-2.png")),
+                //        trapPos, (int)floorPos, 50, 80));
+                //addTrap(new TrapSprite(TrapSprite.TrapType.TALL,
+                //        trapPos, (int)floorPos, 50, 80));
                 break;
+        };
+    }
+
+    public void addTrapSample(int trapPos) {
+        int randomValue = ((int)(Math.random() * 10));
+        Gdx.app.log("AnimatorMainScreen", "addTrapSample: randomValue = " + randomValue);
+        if(randomValue < 6) {
+            // 60% chance to get a small tree
+            TrapSprite testTrap = new TrapSprite(new Texture(Gdx.files.internal("flat-tree-game-ornaments/tree-1.png")));
+            testTrap.setPosition(trapPos, floorPos);
+            testTrap.setSize(35, 40);
+            addTrap(testTrap);
+        } else {
+            // 40% chance to get a tall tree
+            TrapSprite testTrap = new TrapSprite(new Texture(Gdx.files.internal("flat-tree-game-ornaments/tree-2.png")));
+            testTrap.setPosition(trapPos, floorPos);
+            testTrap.setSize(50, 80);
+            addTrap(testTrap);
         }
+
     }
 
     private void addTrap(TrapSprite trap) {
         trap.dispose = false;
+        Gdx.app.log("AnimatorMainScreen", "Adding " + trap.getType() + " at (" + trap.getX() +
+                ", " + trap.getY() + ")");
         traps.add(trap);
     }
 
