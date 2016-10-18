@@ -229,6 +229,14 @@ class AnimatedPlayer extends AnimatedSprite {
         this.lost = lost;
     }
 
+    public boolean isJumping() {
+        return jumping;
+    }
+
+    public void setJumping(boolean jump) {
+        jumping = jump;
+    }
+
     // Try to jump using the given y-velocity
     void tryJump(float y) {
         // If the player is moving AND

@@ -332,9 +332,6 @@ public class AnimatorMainScreen implements Screen {
         addTrap(tallTree);
         //addTrap(new TrapSprite(shortTree.getTexture(), nextTrapSlotFrom(traps.get(traps.size -1)),
          //       (int)floorPos, 35, 50));
-        for(Sprite s: traps) {
-            s.getTexture().dispose();
-        }
 
     }
 
@@ -433,9 +430,11 @@ public class AnimatorMainScreen implements Screen {
                     if (jkirbyRectangle.overlaps(s.getBoundingRectangle())) {
                         Gdx.app.log("AnimatorMainScreen", "player collided with " + s.getType());
                         jkirbyAnimatedSprite.pause();
+                        jkirbyAnimatedSprite.setJumping(false);
                         jkirbyAnimatedSprite.setLost(true);
                         jkirbyAnimatedSprite.setVelocity(0, 0);
                         paused = true;
+                        //reset();
                     }
                 }
             }
@@ -460,11 +459,11 @@ public class AnimatorMainScreen implements Screen {
         font.draw(batch, glyphLayout, camera.position.x - glyphLayout.width / 2,
                 camera.viewportHeight / 2);
         // Draw the number of TrapSprites in the traps Array
-        glyphLayout.setText(font, traps.size + " TrapSprites");
-        font.draw(batch, glyphLayout, camera.position.x - glyphLayout.width / 2,
+        glyphLayout.setText(smallFont, traps.size + " TrapSprites");
+        smallFont.draw(batch, glyphLayout, camera.position.x - glyphLayout.width / 2,
                 0);
-        glyphLayout.setText(font, "Velocity-X: " + jkirbyAnimatedSprite.getVelocityX());
-        font.draw(batch, glyphLayout, camera.position.x - glyphLayout.width / 2,
+        glyphLayout.setText(smallFont, "Velocity-X: " + jkirbyAnimatedSprite.getVelocityX());
+        smallFont.draw(batch, glyphLayout, camera.position.x - glyphLayout.width / 2,
                 glyphLayout.height);
 
 
