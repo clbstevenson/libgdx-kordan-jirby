@@ -22,7 +22,9 @@ public class AnimatorTestGame extends Game {
 
     private Sprite mapSprite;
 
-    private AnimatorMainScreen main;
+    private AnimatorGameScreen game;
+    private AnimatorMenuScreen menu;
+
 
     private float rotationSpeed;
 
@@ -30,9 +32,10 @@ public class AnimatorTestGame extends Game {
 
         batch = new SpriteBatch();
 
-        main = new AnimatorMainScreen(batch);
+        game = new AnimatorGameScreen(batch);
+        menu = new AnimatorMenuScreen(batch);
 
-        this.setScreen(main);
+        this.setScreen(menu);
 
     }
 
