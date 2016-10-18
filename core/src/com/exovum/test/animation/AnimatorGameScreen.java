@@ -32,14 +32,14 @@ import java.util.HashMap;
 
 /**
  * Created by exovu_000 on 10/14/2016.
- * This is the main Screen for displaying the jkirby running animation.
+ * This is the main game Screen for displaying the jkirby running animation.
  * It uses a camera and viewport to render the sprites and scale them accordingly.
  * The running animation sprite [AnimatedSprite] stays on the same spot on the screen, but the
  * background will move behind it. Obstacles will appear and the player will need to jump high
  * enough to avoid the traps.
  */
 
-public class AnimatorMainScreen implements Screen {
+public class AnimatorGameScreen implements Screen {
 
     static final int WORLD_WIDTH = 100;
     static final int WORLD_HEIGHT = 100;
@@ -74,7 +74,7 @@ public class AnimatorMainScreen implements Screen {
 
     private boolean paused;
 
-    public AnimatorMainScreen(SpriteBatch batch) {
+    public AnimatorGameScreen(SpriteBatch batch) {
         this.batch = batch;
 
         float w = Gdx.graphics.getWidth();
@@ -168,7 +168,7 @@ public class AnimatorMainScreen implements Screen {
             public boolean tap(float x, float y, int count, int button) {
                 if (paused) {
                     // If the game is paused, then unpause
-                    Gdx.app.log("AnimatorMainScreen", "tap from 2nd GestureDetector ");
+                    Gdx.app.log("AnimatorGameScreen", "tap from 2nd GestureDetector ");
                     paused = false;
                     // Resume the player's movement and animation
                     jkirbyAnimatedSprite.play();
@@ -176,7 +176,7 @@ public class AnimatorMainScreen implements Screen {
                     //camera.lookAt();
                     // If the game is paused AND the player has lost, then reset everthing
                     if (jkirbyAnimatedSprite.isLost()) {
-                        Gdx.app.log("AnimatorMainScreen", "tapping when player has lost to reset");
+                        Gdx.app.log("AnimatorGameScreen", "tapping when player has lost to reset");
                         reset();
                         return true;
                     }
@@ -244,7 +244,7 @@ public class AnimatorMainScreen implements Screen {
                 /*
                 if (paused) {
                     // If the game is paused, then unpause
-                    Gdx.app.log("AnimatorMainScreen", "touchDown from multiplexer");
+                    Gdx.app.log("AnimatorGameScreen", "touchDown from multiplexer");
                     paused = false;
                     // Resume the player's movement and animation
                     jkirbyAnimatedSprite.play();
@@ -270,7 +270,7 @@ public class AnimatorMainScreen implements Screen {
     }
 
     private void reset() {
-        Gdx.app.log("AnimatorMainScreen", "Resetting all data...");
+        Gdx.app.log("AnimatorGameScreen", "Resetting all data...");
 
         // Reset the camera to the starting position
         float w = Gdx.graphics.getWidth();
@@ -322,7 +322,7 @@ public class AnimatorMainScreen implements Screen {
             // If we created new sprites on reset, then disposing would be the correct action.
         }
         traps.clear();
-        Gdx.app.log("AnimatorMainScreen", "traps size: " + traps.size);
+        Gdx.app.log("AnimatorGameScreen", "traps size: " + traps.size);
         shortTree.setPosition(camera.viewportWidth, floorPos);
         shortTree.setSize(35, 40);
         tallTree.setSize(50, 80);
@@ -425,10 +425,10 @@ public class AnimatorMainScreen implements Screen {
             if(!paused) {
                 // if the trap is in the current map, check for collision
                 if (currentMap.getBoundingRectangle().contains(s.getX(), s.getY())) {
-                    //Gdx.app.log("AnimatorMainScreen", "current map contains trap");
+                    //Gdx.app.log("AnimatorGameScreen", "current map contains trap");
                     //if (jkirbyRectangle.contains(s.getX(), s.getY())) {
                     if (jkirbyRectangle.overlaps(s.getBoundingRectangle())) {
-                        Gdx.app.log("AnimatorMainScreen", "player collided with " + s.getType());
+                        Gdx.app.log("AnimatorGameScreen", "player collided with " + s.getType());
                         jkirbyAnimatedSprite.pause();
                         jkirbyAnimatedSprite.setJumping(false);
                         jkirbyAnimatedSprite.setLost(true);
@@ -492,7 +492,7 @@ public class AnimatorMainScreen implements Screen {
         }
         /*
         for(TrapSprite trap: traps) {
-            //Gdx.app.log("AnimatorMainScreen", "Drawing trap at " + trap.getX() + ", " + trap.getY());
+            //Gdx.app.log("AnimatorGameScreen", "Drawing trap at " + trap.getX() + ", " + trap.getY());
             trap.draw(batch);
             glyphLayout.setText(smallFont, "(" + trap.getX() + "," + trap.getY() + ")");
             smallFont.draw(batch, glyphLayout, trap.getX() - glyphLayout.width/2 + trap.getWidth() / 2,
@@ -516,11 +516,11 @@ public class AnimatorMainScreen implements Screen {
 
     private void addRandomTrapAtPos(int trapPos) {
         int randomValue = (int) Math.random() ;
-        Gdx.app.log("AnimatorMainScreen", "addRandomTrap: randomValue = " + randomValue);
+        Gdx.app.log("AnimatorGameScreen", "addRandomTrap: randomValue = " + randomValue);
         TrapSprite newTrap;
         switch(randomValue) {
             case 0:
-                Gdx.app.log("AnimatorMainScreen", "addRandomTrap: tree-1 at " + trapPos);
+                Gdx.app.log("AnimatorGameScreen", "addRandomTrap: tree-1 at " + trapPos);
                 newTrap = new TrapSprite(new Texture(Gdx.files.internal("flat-tree-game-ornaments/tree-1.png")),
                         trapPos, (int)floorPos, 35, 40);
                 newTrap.setPosition(trapPos, floorPos);
@@ -536,7 +536,7 @@ public class AnimatorMainScreen implements Screen {
                         trapPos, (int)floorPos, 35, 40));*/
                 break;
             case 1:
-                Gdx.app.log("AnimatorMainScreen", "addRandomTrap: tree-2 at " + trapPos);
+                Gdx.app.log("AnimatorGameScreen", "addRandomTrap: tree-2 at " + trapPos);
                 newTrap = new TrapSprite(new Texture(Gdx.files.internal("flat-tree-game-ornaments/tree-2.png")),
                         trapPos, (int)floorPos, 50, 80);
                 newTrap.setPosition(trapPos, floorPos);
@@ -552,7 +552,7 @@ public class AnimatorMainScreen implements Screen {
 
     public void addTrapSample(int trapPos) {
         int randomValue = ((int)(Math.random() * 10));
-        Gdx.app.log("AnimatorMainScreen", "addTrapSample: randomValue = " + randomValue);
+        Gdx.app.log("AnimatorGameScreen", "addTrapSample: randomValue = " + randomValue);
         if(randomValue < 6) {
             // 60% chance to get a small tree
             TrapSprite testTrap = new TrapSprite(new Texture(Gdx.files.internal("flat-tree-game-ornaments/tree-1.png")));
@@ -571,7 +571,7 @@ public class AnimatorMainScreen implements Screen {
 
     private void addTrap(TrapSprite trap) {
         trap.dispose = false;
-        Gdx.app.log("AnimatorMainScreen", "Adding " + trap.getType() + " at (" + trap.getX() +
+        Gdx.app.log("AnimatorGameScreen", "Adding " + trap.getType() + " at (" + trap.getX() +
                 ", " + trap.getY() + ")");
         traps.add(trap);
     }
@@ -579,7 +579,7 @@ public class AnimatorMainScreen implements Screen {
     // Returns the next valid position for a trap based on the last trap in the Array of traps
     private int nextTrapSlot() {
         int slotFromLastTrap = nextTrapSlotFrom(traps.get(traps.size - 1));
-        //Gdx.app.log("AnimatorMainScreen", "nextTrapSlot() = " + slotFromLastTrap);
+        //Gdx.app.log("AnimatorGameScreen", "nextTrapSlot() = " + slotFromLastTrap);
         //return nextTrapSlotFrom(traps.get(traps.size - 1));
         return slotFromLastTrap;
     }
@@ -588,7 +588,7 @@ public class AnimatorMainScreen implements Screen {
     private int nextTrapSlotFrom(TrapSprite trap) {
         float randomDist = ((float)Math.random()) * (2000 / jkirbyAnimatedSprite.getVelocityX());
         int nextSlot = (int)(trap.getX() + trap.getWidth() + 400 + randomDist);
-        //Gdx.app.log("AnimatorMainScreen", "nextTrapSlotFrom() = " + nextSlot);
+        //Gdx.app.log("AnimatorGameScreen", "nextTrapSlotFrom() = " + nextSlot);
         return nextSlot;
     }
 
@@ -601,7 +601,7 @@ public class AnimatorMainScreen implements Screen {
     public void resize(int width, int height) {
         //camera.viewportWidth = width / 32f;
         //camera.viewportHeight = camera.viewportWidth * height/width;
-        Gdx.app.log("AnimatorMainScreen", "Resizing to " + width + " x " + height);
+        Gdx.app.log("AnimatorGameScreen", "Resizing to " + width + " x " + height);
         viewport.update(width, height);
         camera.update();
     }
