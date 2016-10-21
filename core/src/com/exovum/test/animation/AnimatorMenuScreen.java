@@ -18,10 +18,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 /**
  * Created by exovu_000 on 10/18/2016.
@@ -60,7 +62,7 @@ public class AnimatorMenuScreen implements Screen {
         /*
          SECOND TEST - Buttons
         */
-        stage = new Stage(new FitViewport(800,480));
+        stage = new Stage(new StretchViewport(800,480));
         Gdx.input.setInputProcessor(stage);
         Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
 
@@ -69,11 +71,11 @@ public class AnimatorMenuScreen implements Screen {
         Label addressLabel = new Label("Address:", skin);
         TextField addressText = new TextField("", skin);
 
-        /*Table table = new Table();
-        stage.addActor(table);
+        Table table = new Table();
+        //stage.addActor(table);
         table.setSize(260, 195);
         table.setPosition(190, 142);
-        // table.align(Align.right | Align.bottom);
+        table.align(Align.right | Align.bottom);
 
         table.debug();
 
@@ -88,14 +90,16 @@ public class AnimatorMenuScreen implements Screen {
                 return false;
             }
         });
-        table.add(button);*/
+        table.add(button);
         // table.setTouchable(Touchable.disabled);
 
 
         Table table2 = new Table();
-        stage.addActor(table2);
+        //stage.addActor(table2);
         table2.setFillParent(true);
-        table2.bottom();
+        //table2.setScale(2.0f);
+        //table2.center();
+        //table2.top();
 
         TextButton button2 = new TextButton("Button 2", skin);
         button2.addListener(new ChangeListener() {
@@ -110,7 +114,7 @@ public class AnimatorMenuScreen implements Screen {
             }
         });
         table2.add(button2);
-        /*button2.top();
+        //button2.top();
 
         TextButton creditsButton = new TextButton("Credits", skin);
         creditsButton.addListener(new ChangeListener() {
@@ -118,8 +122,20 @@ public class AnimatorMenuScreen implements Screen {
                 System.out.println("View Credits");
             }
         });
-        table2.add(creditsButton);
-        creditsButton.bottom();*/
+        //table2.add(creditsButton);
+        //creditsButton.bottom();
+
+        // Use a VerticalGroup instead of a Table -> stacks items verticall (obv)
+        // and is more lightweight than a Table
+        VerticalGroup menuVerticalGroup= new VerticalGroup();
+        stage.addActor(menuVerticalGroup);
+        menuVerticalGroup.setFillParent(true);
+
+        menuVerticalGroup.center();
+
+        menuVerticalGroup.addActor(button2);
+        menuVerticalGroup.addActor(creditsButton);
+        menuVerticalGroup.columnCenter();
 
         /*
             THIRD TEST - Text/Labels
