@@ -22,6 +22,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.tools.hiero.Hiero;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
@@ -80,9 +81,9 @@ public class AnimatorMenuScreen implements Screen {
         Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
 
         // Add LabelStyles for smallFont and titleFont to the skin
-        skin.add("default-font", smallFont, BitmapFont.class);
+        //skin.add("default-font", smallFont, BitmapFont.class);
         //skin.add("title-font", titleFont, BitmapFont.class);
-        skin.add("title-font", new Label.LabelStyle(titleFont, Color.CHARTREUSE));
+        //*** skin.add("title-font", new Label.LabelStyle(titleFont, Color.CHARTREUSE)); ***
         //skin.add("title-font", new TextButton.TextButtonStyle( smallFont, Color.WHITE));
 
         /*
@@ -150,12 +151,14 @@ public class AnimatorMenuScreen implements Screen {
 
         // Add the title of the game at the top of the MenuScreen
         Table titleTable = new Table(skin);
-        Label titleLabel = new Label("Kordan Jirby", skin, "title-font");
+        Label titleLabel = new Label("Kordan Jirby", skin, "fontTest");
         //titleLabel.setStyle(new Label.LabelStyle(titleFont, Color.FIREBRICK));
         titleLabel.setAlignment(Align.center, Align.center);
         titleLabel.setPosition(stage.getWidth() / 2, stage.getHeight());
         //titleLabel.setFontScale(2.0f);
         titleTable.defaults().expand().fill().padBottom(4f).padTop(4f);
+
+        //Hiero h = new Hiero();
 
         titleTable.add(titleLabel);
 
