@@ -151,7 +151,8 @@ public class AnimatorMenuScreen implements Screen {
 
         // Add the title of the game at the top of the MenuScreen
         Table titleTable = new Table(skin);
-        Label titleLabel = new Label("Kordan Jirby", skin, "fontTest");
+        Label titleLabel = new Label("Kordan Jirby", skin, "title");
+        titleLabel.setColor(Color.OLIVE);
         //titleLabel.setStyle(new Label.LabelStyle(titleFont, Color.FIREBRICK));
         titleLabel.setAlignment(Align.center, Align.center);
         titleLabel.setPosition(stage.getWidth() / 2, stage.getHeight());
