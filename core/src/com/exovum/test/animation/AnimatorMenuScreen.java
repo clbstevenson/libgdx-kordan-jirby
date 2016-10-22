@@ -8,11 +8,13 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -42,8 +44,19 @@ public class AnimatorMenuScreen implements Screen {
     Actor root;
     ShapeRenderer renderer;
 
+    BitmapFont titleFont, smallFont;
+    FreeTypeFontGenerator generator;
+    FreeTypeFontGenerator.FreeTypeFontParameter parameter;
+
     public AnimatorMenuScreen(SpriteBatch batch) {
         this.batch = batch;
+
+        generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Boxy-Bold.ttf"));
+        parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 26; // font size
+        titleFont = generator.generateFont(parameter); // font size of 12 pizels
+        parameter.size = 18;
+        smallFont = generator.generateFont(parameter);
 
         /* FIRST TEST
         // Sample setup for a Stage with a Table UI
@@ -66,6 +79,13 @@ public class AnimatorMenuScreen implements Screen {
         Gdx.input.setInputProcessor(stage);
         Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
 
+        // Add LabelStyles for smallFont and titleFont to the skin
+        skin.add("default-font", smallFont, BitmapFont.class);
+        //skin.add("title-font", titleFont, BitmapFont.class);
+        skin.add("title-font", new Label.LabelStyle(titleFont, Color.CHARTREUSE));
+        //skin.add("title-font", new TextButton.TextButtonStyle( smallFont, Color.WHITE));
+
+        /*
         Label nameLabel = new Label("Name:", skin);
         TextField nameText = new TextField("", skin);
         Label addressLabel = new Label("Address:", skin);
@@ -96,7 +116,13 @@ public class AnimatorMenuScreen implements Screen {
 
         Table table2 = new Table();
         //stage.addActor(table2);
-        table2.setFillParent(true);
+        //table2.setFillParent(true);
+        table2.setSize(400, 400);
+        // Set the position to be the middle of the parent, in this case the stage
+        //table2.setPosition(table2.getParent().getX() + table2.getParent().getWidth(),
+        //        table2.getParent().getY() + table2.getParent().getHeight());
+        //table2.setPosition(stage.getWidth() / 2, stage.getHeight() / 2);
+        table2.setColor(Color.ORANGE);
         //table2.setScale(2.0f);
         //table2.center();
         //table2.top();
@@ -114,20 +140,69 @@ public class AnimatorMenuScreen implements Screen {
             }
         });
         table2.add(button2);
-        //button2.top();
+        //button2.top();*/
 
-        TextButton creditsButton = new TextButton("Credits", skin);
-        creditsButton.addListener(new ChangeListener() {
+
+
+        Table mainTable = new Table(skin);
+        //mainTable.defaults().expand().fill().padBottom(4f).padTop(4f);
+        mainTable.setFillParent(true);
+
+        // Add the title of the game at the top of the MenuScreen
+        Table titleTable = new Table(skin);
+        Label titleLabel = new Label("Kordan Jirby", skin, "title-font");
+        //titleLabel.setStyle(new Label.LabelStyle(titleFont, Color.FIREBRICK));
+        titleLabel.setAlignment(Align.center, Align.center);
+        titleLabel.setPosition(stage.getWidth() / 2, stage.getHeight());
+        //titleLabel.setFontScale(2.0f);
+        titleTable.defaults().expand().fill().padBottom(4f).padTop(4f);
+
+        titleTable.add(titleLabel);
+
+        // Add the buttons for the user to press: play, help, credits, exit
+        TextButton playButton = new TextButton("Play Game", skin); //, "small-font");
+        TextButton helpButton = new TextButton("Instructions", skin); //, "small-font");
+        TextButton creditsButton = new TextButton("Credits", skin); //, "small-font");
+        TextButton exitButton = new TextButton("Exit", skin); //, "small-font");
+
+        Table buttonTable = new Table(skin);
+        //menuTable.setBackground("console2");
+
+        buttonTable.defaults().expand().fill().padBottom(4f).padTop(4f);
+        buttonTable.add(playButton).width(128f).height(80f).row();
+        buttonTable.add(helpButton).width(128f).height(80f).row();
+        buttonTable.add(creditsButton).width(128f).height(80f).row();
+        buttonTable.add(exitButton).width(128f).height(80f);
+
+        //menuTable.setFillParent(true);
+
+        mainTable.add(titleTable).row();
+        mainTable.add(buttonTable);
+        stage.addActor(mainTable);
+
+        //stage.addActor(menuTable);
+
+
+
+        playButton.addListener(new ChangeListener() {
             public void changed (ChangeEvent event, Actor actor) {
-                System.out.println("View Credits");
+                Gdx.app.log("AnimatorMenuScreen", "Press playButton");
             }
         });
-        //table2.add(creditsButton);
-        //creditsButton.bottom();
+        helpButton.addListener(new ChangeListener() {
+            public void changed (ChangeEvent event, Actor actor) {
+                Gdx.app.log("AnimatorMenuScreen", "Press helpButton");
+            }
+        });
+        creditsButton.addListener(new ChangeListener() {
+            public void changed (ChangeEvent event, Actor actor) {
+                Gdx.app.log("AnimatorMenuScreen", "Press creditsButton");
+            }
+        });
 
         // Use a VerticalGroup instead of a Table -> stacks items verticall (obv)
         // and is more lightweight than a Table
-        VerticalGroup menuVerticalGroup= new VerticalGroup();
+        /*VerticalGroup menuVerticalGroup= new VerticalGroup();
         stage.addActor(menuVerticalGroup);
         menuVerticalGroup.setFillParent(true);
 
@@ -135,7 +210,7 @@ public class AnimatorMenuScreen implements Screen {
 
         menuVerticalGroup.addActor(button2);
         menuVerticalGroup.addActor(creditsButton);
-        menuVerticalGroup.columnCenter();
+        menuVerticalGroup.columnCenter();*/
 
         /*
             THIRD TEST - Text/Labels
@@ -234,6 +309,9 @@ public class AnimatorMenuScreen implements Screen {
     public void dispose() {
         stage.dispose();
         skin.dispose();
+        generator.dispose();
+        titleFont.dispose();
+        smallFont.dispose();
     }
 
 }
