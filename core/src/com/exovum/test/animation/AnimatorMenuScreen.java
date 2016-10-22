@@ -162,6 +162,7 @@ public class AnimatorMenuScreen implements Screen {
         //Hiero h = new Hiero();
 
         titleTable.add(titleLabel);
+        titleTable.padBottom(10f);
 
         // Add the buttons for the user to press: play, help, credits, exit
         TextButton playButton = new TextButton("Play Game", skin); //, "small-font");
@@ -172,11 +173,12 @@ public class AnimatorMenuScreen implements Screen {
         Table buttonTable = new Table(skin);
         //menuTable.setBackground("console2");
 
-        buttonTable.defaults().expand().fill().padBottom(4f).padTop(4f);
-        buttonTable.add(playButton).width(128f).height(80f).row();
-        buttonTable.add(helpButton).width(128f).height(80f).row();
-        buttonTable.add(creditsButton).width(128f).height(80f).row();
-        buttonTable.add(exitButton).width(128f).height(80f);
+        buttonTable.defaults().expand().fill().padBottom(10f).padTop(10f);
+        buttonTable.add(playButton).width(128f).height(60f).row();
+        buttonTable.add(helpButton).width(128f).height(60f).row();
+        buttonTable.add(creditsButton).width(128f).height(60f).row();
+        buttonTable.add(exitButton).width(128f).height(60f);
+        buttonTable.padTop(30f).padBottom(30f);
 
         //menuTable.setFillParent(true);
 
@@ -201,6 +203,11 @@ public class AnimatorMenuScreen implements Screen {
         creditsButton.addListener(new ChangeListener() {
             public void changed (ChangeEvent event, Actor actor) {
                 Gdx.app.log("AnimatorMenuScreen", "Press creditsButton");
+            }
+        });
+        exitButton.addListener(new ChangeListener() {
+            public void changed (ChangeEvent event, Actor actor) {
+                Gdx.app.log("AnimatorMenuScreen", "Press exitButton");
             }
         });
 

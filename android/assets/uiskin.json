@@ -47,11 +47,12 @@
     "default-vertical": { "background": "default-slider", "knob": "default-round-large" }
   },
   "com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle": {
-    "default": { "font": "default-font", "fontColor": "white"}
-  },
-  "com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle": {
+    "default": { "font": "default-font", "fontColor": "white"},
     "title": { "font": "title-font", "fontColor": "white"}
   },
+  /*"com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle": {
+    "title": { "font": "title-font", "fontColor": "white"}
+  },*/
   "com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle": {
     "default": { "selection": "selection", "background": "textfield", "font": "default-font", "fontColor": "white", "cursor": "cursor" }
   },
