@@ -16,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 /**
@@ -43,7 +44,7 @@ public class InstructionsScreen implements Screen {
 
         menuBackground = new Texture(Gdx.files.internal("beach-ocean-sea-bg/transparent-png/full_background.png"));
 
-        stage = new Stage(new StretchViewport(800,480));
+        stage = new Stage(new FitViewport(800,480));
         Gdx.input.setInputProcessor(stage);
         skin = new Skin(Gdx.files.internal("uiskin.json"));
 
@@ -59,12 +60,12 @@ public class InstructionsScreen implements Screen {
         myHeader.setAlignment(Align.center);
 
         Label instructions = new Label("In accordance with Her Majesty's royal \ndecree 412.G subsection IV,\n" +
-                "servants whom exhibit the pinnacle of dexterity,\n constitution, and\n" +
+                "servants whom exhibit the pinnacle of dexterity,\n" +
                 "constitution, and adoration for Oxford commas were selected.\n" +
                 "However, due to recent budget cuts \nand the first goblin raids since '42,\n" +
-                "you have been randomly selected for royal duty\n" +
-                "as a result of no oustanding mark or merit of your own.\n" +
-                "May your service, however that lasts, benefit Her Majesty.",
+                "you have been randomly chosen for royal duty\n" +
+                "as a result of no outstanding mark or merit of your own.\n" +
+                "May your service, however long that may be, benefit Her Majesty.",
                 skin, "small-font");
         instructions.setColor(Color.DARK_GRAY);
         instructions.setWrap(false);
