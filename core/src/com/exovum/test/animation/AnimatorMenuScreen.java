@@ -1,5 +1,6 @@
 package com.exovum.test.animation;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
@@ -32,6 +33,8 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.run;
+
 /**
  * Created by exovu_000 on 10/18/2016.
  * This is the menu screen for the Kordan Jirby running animation game.
@@ -42,24 +45,27 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 public class AnimatorMenuScreen implements Screen {
 
     private SpriteBatch batch;
+    private Game game;
+    private AnimatorMenuScreen screen;
 
     private Stage stage;
     private Table mainTable, titleTable, baseTable;
     private Table infoTable;
     private Skin skin;
-    Actor root;
     ShapeRenderer renderer;
 
     Texture menuBackground;
 
-    public AnimatorMenuScreen(SpriteBatch batch) {
+    public AnimatorMenuScreen(final SpriteBatch batch, final Game game) {
         this.batch = batch;
+        this.game = game;
+        screen = this;
 
         menuBackground = new Texture(Gdx.files.internal("beach-ocean-sea-bg/transparent-png/full_background.png"));
 
         stage = new Stage(new StretchViewport(800,480));
         Gdx.input.setInputProcessor(stage);
-        final Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
+        skin = new Skin(Gdx.files.internal("uiskin.json"));
 
         mainTable = new Table(skin);
         //mainTable.defaults().expand().fill().padBottom(4f).padTop(4f);
@@ -114,10 +120,15 @@ public class AnimatorMenuScreen implements Screen {
         buttonTable.padTop(30f).padBottom(30f);
         buttonTable.left();
 
+        /*
+            Temporary removal of infoTable
+            It was not easy for me to add hidden/new text and for the layouts to update correctly.
+            Changing plan to create a new Screen for Credits (and instructions too).
+         */
         infoTable = new Table(skin); // = new Label("", skin, "small-font");
         infoTable.setVisible(false);
         infoTable.defaults().expand().fill().padBottom(8f).padTop(2f);
-        baseTable.add(infoTable);
+        //baseTable.add(infoTable);
 
         // Add title table at the top of mainTable
         mainTable.add(titleTable).row();
@@ -141,6 +152,7 @@ public class AnimatorMenuScreen implements Screen {
         creditsButton.addListener(new ChangeListener() {
             public void changed (ChangeEvent event, Actor actor) {
                 Gdx.app.log("AnimatorMenuScreen", "Pressed creditsButton");
+                game.setScreen(new CreditsScreen(batch, game, screen));
                 /*
                 *  Attempt at adding text next to the buttons.
                 *  Status: Unsuccessful. Updating the layout once adding the credits text
