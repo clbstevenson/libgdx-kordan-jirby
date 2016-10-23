@@ -67,7 +67,7 @@ public class AnimatorMenuScreen implements Screen {
 
         // Add the title of the game at the top of the MenuScreen
         titleTable = new Table(skin);
-        Label titleLabel = new Label("Kordan Jirby", skin, "title");
+        final Label titleLabel = new Label("Kordan Jirby", skin, "title");
         titleLabel.setColor(Color.FIREBRICK);
         //titleLabel.setStyle(new Label.LabelStyle(titleFont, Color.FIREBRICK));
         titleLabel.setAlignment(Align.center, Align.center);
@@ -106,16 +106,16 @@ public class AnimatorMenuScreen implements Screen {
         creditsButton.getLabel().setColor(buttonColor);
         exitButton.getLabel().setColor(buttonColor);
 
-
         buttonTable.defaults().expand().fill().padBottom(8f).padTop(2f);
         buttonTable.add(playButton).width(180f).height(60f).row();
         buttonTable.add(helpButton).width(180f).height(60f).row();
         buttonTable.add(creditsButton).width(180f).height(60f).row();
         buttonTable.add(exitButton).width(180f).height(60f);
         buttonTable.padTop(30f).padBottom(30f);
+        buttonTable.left();
 
         infoTable = new Table(skin); // = new Label("", skin, "small-font");
-        //infoTable.setVisible(false);
+        infoTable.setVisible(false);
         infoTable.defaults().expand().fill().padBottom(8f).padTop(2f);
         baseTable.add(infoTable);
 
@@ -141,30 +141,51 @@ public class AnimatorMenuScreen implements Screen {
         creditsButton.addListener(new ChangeListener() {
             public void changed (ChangeEvent event, Actor actor) {
                 Gdx.app.log("AnimatorMenuScreen", "Pressed creditsButton");
+                /*
+                *  Attempt at adding text next to the buttons.
+                *  Status: Unsuccessful. Updating the layout once adding the credits text
+                *           does not update as easily as I hoped.
+                *          Changing plan to use different Screens for Credits & Instructions.
                 // If the table is visible and already showing credits, then 'minimize' infoTable
                 if(infoTable.isVisible() && infoTable.getName() != null && infoTable.getName().equals("Credits")) {
                     Gdx.app.log("AnimatorMenuScreen", "Hide the credits menu");
                     infoTable.setVisible(false);
                     infoTable.clearChildren();
                 } else {
-                    Gdx.app.log("AnimatorMenuScreen", "Display the credits");
+                    Gdx.app.log("AnimatorMenuScreen", "Display the credits text");
                     // Otherwise, make the infoTable visible and set text to the credits
                     infoTable.setVisible(true);
                     infoTable.clearChildren();
-                    infoTable.center();
+                    //infoTable.center();
                     Label musicLabel = new Label("Music\n" + "Pixel Peeker Polka - slower Kevin MacLeod (incompetech.com)\n" +
                             "Licensed under Creative Commons: By Attribution 3.0 License\n" +
                             "http://creativecommons.org/licenses/by/3.0/",
                             skin, "small-font");
-                    musicLabel.setColor(Color.FIREBRICK);
+                    musicLabel.setColor(Color.BLACK);
+                    //infoTable.addActor(musicLabel);
+
                     infoTable.addActor(musicLabel);
-                    infoTable.validate();
-                    baseTable.validate();
-                    infoTable.setFillParent(true);
-                    baseTable.center();
+                    infoTable.padLeft(20f);
+
+                    //musicLabel.setPosition(stage.getWidth() / 2 + 50, stage.getHeight() / 2 + 100, Align.right);
+                    infoTable.defaults().expand().fill().padBottom(8f).padTop(2f);
+                    musicLabel.setWidth(200f);
+                    //musicLabel.setWrap(true);
+                    musicLabel.setAlignment(Align.center);
+
+                    //musicLabel.setFillParent(true);
+                    // "Invalidates this actor's layout, causing layout() to happen next time
+                    // validate() is called
+                    infoTable.invalidate();
+                    baseTable.invalidate();
+                    infoTable.center();
+
+                    //infoTable.setFillParent(true);
+
+                    //titleTable.add(musicLabel);
                 }
                 infoTable.setName("Credits");
-
+                */
             }
         });
         exitButton.addListener(new ChangeListener() {
