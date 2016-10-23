@@ -209,7 +209,8 @@ public class AnimatorMenuScreen implements Screen {
         });
         exitButton.addListener(new ChangeListener() {
             public void changed (ChangeEvent event, Actor actor) {
-                Gdx.app.log("AnimatorMenuScreen", "Pressed exitButton");
+                Gdx.app.log("AnimatorMenuScreen", "Pressed exitButton - exiting application");
+                Gdx.app.exit();
             }
         });
 

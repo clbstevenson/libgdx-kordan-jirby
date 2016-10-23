@@ -391,7 +391,6 @@ public class AnimatorGameScreen implements Screen {
 
         // Based on how far the player goes and how close they are to the furthest trap,
         // add a new trap
-        // TODO: Fix this! It continuously spawns after a collision, and player collides with nothing.
 
         int nextTrapPos = nextTrapSlot();
 
@@ -616,7 +615,6 @@ public class AnimatorGameScreen implements Screen {
     public void resume() {
         //paused = false;
         //jkirbyAnimatedSprite.play();
-        // TODO: instead of auto-resuming, resume when the screen is tapped
     }
 
     @Override
