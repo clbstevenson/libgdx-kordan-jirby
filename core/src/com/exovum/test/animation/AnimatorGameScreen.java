@@ -1,5 +1,6 @@
 package com.exovum.test.animation;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
@@ -52,6 +53,7 @@ public class AnimatorGameScreen implements Screen {
     private Viewport viewport;
     private OrthographicCamera camera;
     private SpriteBatch batch;
+    private Game game;
     private TextureAtlas atlas;
 
     private Animation jkirbyAnimation;
@@ -74,8 +76,9 @@ public class AnimatorGameScreen implements Screen {
 
     private boolean paused;
 
-    public AnimatorGameScreen(SpriteBatch batch) {
+    public AnimatorGameScreen(SpriteBatch batch, final Game game) {
         this.batch = batch;
+        this.game = game;
 
         float w = Gdx.graphics.getWidth();
         float h = Gdx.graphics.getHeight();

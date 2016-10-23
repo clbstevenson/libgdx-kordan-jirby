@@ -32,7 +32,7 @@ public class AnimatorTestGame extends Game {
 
         batch = new SpriteBatch();
 
-        game = new AnimatorGameScreen(batch);
+        game = new AnimatorGameScreen(batch, this);
         menu = new AnimatorMenuScreen(batch, this);
 
         this.setScreen(menu);

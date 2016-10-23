@@ -148,6 +148,7 @@ public class AnimatorMenuScreen implements Screen {
         playButton.addListener(new ChangeListener() {
             public void changed (ChangeEvent event, Actor actor) {
                 Gdx.app.log("AnimatorMenuScreen", "Pressed playButton");
+                game.setScreen(new AnimatorGameScreen(batch, game));
             }
         });
         helpButton.addListener(new ChangeListener() {

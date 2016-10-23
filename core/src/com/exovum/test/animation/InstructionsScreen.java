@@ -64,7 +64,7 @@ public class InstructionsScreen implements Screen {
                 "However, due to recent budget cuts \nand the first goblin raids since '42,\n" +
                 "you have been randomly chosen for royal duty\n" +
                 "as a result of no outstanding mark or merit of your own.\n" +
-                "May your service, however short that may be, benefit Her Majesty.",
+                "May your service, however short, benefit Her Majesty.",
                 skin, "small-font");
         instructions.setColor(Color.DARK_GRAY);
         instructions.setWrap(false);
