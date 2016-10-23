@@ -22,6 +22,11 @@ import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.PooledLinkedList;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -55,6 +60,10 @@ public class AnimatorGameScreen implements Screen {
     private SpriteBatch batch;
     private Game game;
     private TextureAtlas atlas;
+
+    private Stage stage;
+    private Skin skin;
+    private TextButton backButton;
 
     private Animation jkirbyAnimation;
     private AnimatedPlayer jkirbyAnimatedSprite;
@@ -106,6 +115,21 @@ public class AnimatorGameScreen implements Screen {
         viewport = new FitViewport(800, 480, camera);
         camera.update();
         viewport.update(800, 480);
+
+        stage = new Stage(viewport);
+        skin = new Skin(Gdx.files.internal("uiskin.json"));
+
+        backButton = new TextButton("Back to Menu", skin, "small-font");
+        backButton.setWidth(180f);
+        backButton.setHeight(60f);
+        stage.addActor(backButton);
+
+        backButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                Gdx.app.log("AnimatorGameScreen", "Pressed back button");
+            }
+        });
         //camera.position.set(camera.viewportWidth / 2f, camera.viewportHeight / 2f, 0);
         //camera.update();
 
@@ -161,6 +185,7 @@ public class AnimatorGameScreen implements Screen {
         // Setup the InputProcessors
         // Use a multiplexer to handle multiple InputProcessors for different events
         InputMultiplexer multiplexer = new InputMultiplexer();
+        multiplexer.addProcessor(stage);
         multiplexer.addProcessor(new GestureDetector(new GestureListener() {
             @Override
             public boolean touchDown(float x, float y, int pointer, int button) {
@@ -226,6 +251,7 @@ public class AnimatorGameScreen implements Screen {
         }));
         multiplexer.addProcessor(new GestureDetector(new AnimatorGestureListener(jkirbyAnimatedSprite)));
 
+
         multiplexer.addProcessor(new InputAdapter() {
 
             @Override
@@ -288,7 +314,8 @@ public class AnimatorGameScreen implements Screen {
         camera.position.set(0,0,0);
         viewport = new FitViewport(800, 480, camera);
         camera.update();
-        //viewport.update(800, 480);
+
+        stage.setViewport(viewport);
 
         //batch.flush();
         // reset the camera location
@@ -349,6 +376,9 @@ public class AnimatorGameScreen implements Screen {
                         jkirbyAnimatedSprite.getVelocityX(), 0, 0);
                 distanceTraveled += jkirbyAnimatedSprite.getVelocityX();
                 jkirbyAnimatedSprite.updateVelocity(distanceTraveled);
+
+                //backButton.setPosition(camera.position.x - backButton.getWidth() / 2,
+                //        camera.viewportHeight / 2);
             }
 
             // Move the player animation with the camera [based on moveSpeed]
@@ -435,6 +465,9 @@ public class AnimatorGameScreen implements Screen {
                         jkirbyAnimatedSprite.setJumping(false);
                         jkirbyAnimatedSprite.setLost(true);
                         jkirbyAnimatedSprite.setVelocity(0, 0);
+                        backButton.setPosition(camera.position.x,
+                                camera.viewportHeight / 2 );
+                        //backButton.setPosition(viewport.getScreenX(), viewport.getScreenY());
                         paused = true;
                         //reset();
                     }
@@ -506,6 +539,11 @@ public class AnimatorGameScreen implements Screen {
 
         // Draw the current frame of the AnimatedPlayer sprite
         jkirbyAnimatedSprite.draw(batch);
+
+        if(paused) {
+            stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
+            stage.draw();
+        }
 
         /*
          End SpriteBatch rendering
@@ -605,6 +643,7 @@ public class AnimatorGameScreen implements Screen {
         //camera.viewportHeight = camera.viewportWidth * height/width;
         Gdx.app.log("AnimatorGameScreen", "Resizing to " + width + " x " + height);
         viewport.update(width, height);
+        stage.setViewport(viewport);
         camera.update();
     }
 
@@ -637,6 +676,8 @@ public class AnimatorGameScreen implements Screen {
         jkirbyAnimatedSprite.getTexture().dispose();
         font.dispose();
         generator.dispose();
+        stage.dispose();
+        skin.dispose();
         batch.dispose();
     }
 }
