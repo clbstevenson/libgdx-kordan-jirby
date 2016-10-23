@@ -53,9 +53,9 @@ public class AnimatorMenuScreen implements Screen {
     private Table mainTable, titleTable, baseTable;
     private Table infoTable;
     private Skin skin;
-    ShapeRenderer renderer;
+    private ShapeRenderer renderer;
 
-    Texture menuBackground;
+    private Texture menuBackground;
 
     public AnimatorMenuScreen(final SpriteBatch batch, final Game game) {
         this.batch = batch;
@@ -104,12 +104,15 @@ public class AnimatorMenuScreen implements Screen {
         //menuTable.setBackground("console2");
         // Set the color of the BACKGROUND on the buttons
         Color buttonColor = Color.SKY;
+
+        Gdx.app.log("AnimatorMenuScreen", "Color RGB SKY: " + Color.SKY.toString());
         playButton.setColor(buttonColor);
         helpButton.setColor(buttonColor);
         creditsButton.setColor(buttonColor);
         exitButton.setColor(buttonColor);
         // Set the color of the TEXT on the buttons
-        buttonColor = Color.BLACK;
+        //buttonColor = new Color(0.845f, 0.845f, 0.845f, 1);
+        buttonColor = new Color(0.91f, 0.91f, 0.91f, 1);
         playButton.getLabel().setColor(buttonColor);
         helpButton.getLabel().setColor(buttonColor);
         creditsButton.getLabel().setColor(buttonColor);
@@ -242,7 +245,9 @@ public class AnimatorMenuScreen implements Screen {
 
         // Start SpriteBatch rendering
         batch.begin();
-        batch.draw(menuBackground, 0, 0, stage.getWidth(), stage.getHeight());
+        // Fit the background image to the viewport's screen size, instead of the stage's size
+        batch.draw(menuBackground, 0, 0, stage.getViewport().getScreenWidth(),
+                stage.getViewport().getScreenHeight());
         // End SpriteBatch rendering
         batch.end();
 

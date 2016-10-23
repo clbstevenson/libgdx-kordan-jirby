@@ -26,15 +26,14 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 public class InstructionsScreen implements Screen {
 
-    SpriteBatch batch;
-    Game game;
+    private SpriteBatch batch;
+    private Game game;
 
     private Stage stage;
     private Table mainTable, baseTable;
     private Skin skin;
-    ShapeRenderer renderer;
 
-    Texture menuBackground;
+    private Texture menuBackground;
 
     public InstructionsScreen(final SpriteBatch batch, final Game game) {
         this.batch = batch;
@@ -65,7 +64,7 @@ public class InstructionsScreen implements Screen {
                 "However, due to recent budget cuts \nand the first goblin raids since '42,\n" +
                 "you have been randomly chosen for royal duty\n" +
                 "as a result of no outstanding mark or merit of your own.\n" +
-                "May your service, however long that may be, benefit Her Majesty.",
+                "May your service, however short that may be, benefit Her Majesty.",
                 skin, "small-font");
         instructions.setColor(Color.DARK_GRAY);
         instructions.setWrap(false);
@@ -90,7 +89,7 @@ public class InstructionsScreen implements Screen {
         Color buttonColor = Color.SKY;
         exitButton.setColor(buttonColor);
         // Set the color of the TEXT on the buttons
-        exitButton.getLabel().setColor(Color.BLACK);
+        exitButton.getLabel().setColor(new Color(0.91f, 0.91f, 0.91f, 1));
 
 
         buttonTable.defaults().expand().fill().padBottom(4f).padTop(2f);
@@ -143,7 +142,9 @@ public class InstructionsScreen implements Screen {
 
         // Start SpriteBatch rendering
         batch.begin();
-        batch.draw(menuBackground, 0, 0, stage.getWidth(), stage.getHeight());
+        // Fit the background image to the viewport's screen size, instead of the stage's size
+        batch.draw(menuBackground, 0, 0, stage.getViewport().getScreenWidth(),
+                stage.getViewport().getScreenHeight());
         // End SpriteBatch rendering
         batch.end();
 

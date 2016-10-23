@@ -28,16 +28,14 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.run;
 
 public class CreditsScreen implements Screen {
 
-    SpriteBatch batch;
-    Game game;
+    private SpriteBatch batch;
+    private Game game;
 
     private Stage stage;
     private Table mainTable, baseTable;
-    private Table infoTable;
     private Skin skin;
-    ShapeRenderer renderer;
 
-    Texture menuBackground;
+    private Texture menuBackground;
 
     public CreditsScreen(final SpriteBatch batch, final Game game) {
         this.batch = batch;
@@ -103,7 +101,7 @@ public class CreditsScreen implements Screen {
         Color buttonColor = Color.SKY;
         exitButton.setColor(buttonColor);
         // Set the color of the TEXT on the buttons
-        exitButton.getLabel().setColor(Color.BLACK);
+        exitButton.getLabel().setColor(new Color(0.91f, 0.91f, 0.91f, 1));
 
 
         buttonTable.defaults().expand().fill().padBottom(4f).padTop(2f);
@@ -162,7 +160,9 @@ public class CreditsScreen implements Screen {
 
         // Start SpriteBatch rendering
         batch.begin();
-        batch.draw(menuBackground, 0, 0, stage.getWidth(), stage.getHeight());
+        // Fit the background image to the viewport's screen size, instead of the stage's size
+        batch.draw(menuBackground, 0, 0, stage.getViewport().getScreenWidth(),
+                stage.getViewport().getScreenHeight());
         // End SpriteBatch rendering
         batch.end();
 
