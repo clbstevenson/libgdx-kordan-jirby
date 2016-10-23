@@ -18,31 +18,28 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.run;
-
 /**
  * Created by exovu_000 on 10/22/2016.
  * A Screen implementation to display the Credits, accessed from the AnimatorMenuScreen.
  */
 
-public class CreditsScreen implements Screen {
+public class InstructionsScreen implements Screen {
 
     SpriteBatch batch;
     Game game;
 
     private Stage stage;
     private Table mainTable, baseTable;
-    private Table infoTable;
     private Skin skin;
     ShapeRenderer renderer;
 
     Texture menuBackground;
 
-    public CreditsScreen(final SpriteBatch batch, final Game game) {
+    public InstructionsScreen(final SpriteBatch batch, final Game game) {
         this.batch = batch;
         this.game = game;
 
-        Gdx.app.log("CreditsScreen", "Creating CreditsScreen");
+        Gdx.app.log("InstructionsScreen", "Creating InstructionsScreen");
 
         menuBackground = new Texture(Gdx.files.internal("beach-ocean-sea-bg/transparent-png/full_background.png"));
 
@@ -57,45 +54,35 @@ public class CreditsScreen implements Screen {
         baseTable = new Table(skin);
         baseTable.defaults().expand().fill().padBottom(10f).padTop(10f);
 
-        Label myHeader = new Label("General", skin, "small-font");
+        Label myHeader = new Label("Instructions", skin, "small-font");
         myHeader.setColor(Color.FIREBRICK);
         myHeader.setAlignment(Align.center);
 
-        Label myCredits = new Label("Programming and Development\n" +
-                "Caleb Stevenson", skin, "small-font");
-        myCredits.setColor(Color.BLACK);
-        myCredits.setAlignment(Align.center);
-
-        Label musicHeader = new Label("Music", skin, "small-font");
-        musicHeader.setColor(Color.FIREBRICK);
-        musicHeader.setAlignment(Align.center);
-
-        Label musicCredits = new Label("\"Pixel Peeker Polka - slower\", \"Rainbows\"\n" +
-                "Kevin MacLeod (incompetech.com)\n" +
-                "Licensed under Creative Commons: By Attribution 3.0\n" +
-                "http://creativecommons.org/licenses/by/3.0/", skin, "small-font");
-        musicCredits.setColor(Color.BLACK);
-        musicCredits.setAlignment(Align.center);
-
-        Label artHeader = new Label("Artwork", skin, "small-font");
-        artHeader.setColor(Color.FIREBRICK);
-        artHeader.setAlignment(Align.center);
-
-        Label artCredits = new Label("Background and Tree Sprites\n" +
-                "http://bevouliin.com\nopengameart.org", skin, "small-font");
-        artCredits.setColor(Color.BLACK);
-
-        artCredits.setAlignment(Align.center);
+        Label instructions = new Label("In accordance with Her Majesty's royal \ndecree 412.G subsection IV,\n" +
+                "servants whom exhibit the pinnacle of dexterity,\n constitution, and\n" +
+                "constitution, and adoration for Oxford commas were selected.\n" +
+                "However, due to recent budget cuts \nand the first goblin raids since '42,\n" +
+                "you have been randomly selected for royal duty\n" +
+                "as a result of no oustanding mark or merit of your own.\n" +
+                "May your service, however that lasts, benefit Her Majesty.",
+                skin, "small-font");
+        instructions.setColor(Color.DARK_GRAY);
+        instructions.setWrap(false);
+        instructions.setAlignment(Align.center);
+        // NOTE FOR LATER:
+        // Can also change this flavor text to "to allow you to jump twice as high over those
+        // aborreal abominations...etc
+        Label psInstructions = new Label("P.S. You have also been outfitted with an internal hypsometer,\n" +
+                "so just swipe the air in front of you for an extra boost.", skin, "small-font");
+        psInstructions.setColor(Color.FIREBRICK);
+        psInstructions.setAlignment(Align.center);
 
         TextButton exitButton = new TextButton("Back to Menu", skin, "small-font");
 
         Table buttonTable = new Table(skin);
         baseTable.add(myHeader).row();
-        baseTable.add(myCredits).row();
-        baseTable.add(musicHeader).row();
-        baseTable.add(musicCredits).row();
-        baseTable.add(artHeader).row();
-        baseTable.add(artCredits).row();
+        baseTable.add(instructions).row();
+        baseTable.add(psInstructions).row();
         baseTable.add(buttonTable);
         //menuTable.setBackground("console2");
         // Set the color of the BACKGROUND on the buttons
@@ -110,6 +97,9 @@ public class CreditsScreen implements Screen {
         //buttonTable.padTop(20f).padBottom(20f);
         buttonTable.left();
 
+       // exitButton.padTop(2f);
+
+
         // Add baseTable containing buttonTable to the next row of mainTable
         //mainTable.add(buttonTable);
         mainTable.add(baseTable);
@@ -118,19 +108,10 @@ public class CreditsScreen implements Screen {
 
         exitButton.addListener(new ChangeListener() {
             public void changed(ChangeEvent event, Actor actor) {
-                Gdx.app.log("CreditsScreen", "Exiting to main menu");
+                Gdx.app.log("InstructionsScreen", "Exiting to main menu");
                 game.setScreen(new AnimatorMenuScreen(batch, game));
             }
         });
-        /*exitButton.addAction(run(new Runnable() {
-
-            @Override
-            public void run() {
-                Gdx.app.log("CreditsScreen", "Exiting to main menu");
-                game.setScreen(new AnimatorMenuScreen(batch, game)); //prevScreen);
-            }
-        }));
-        */
     }
 
     @Override

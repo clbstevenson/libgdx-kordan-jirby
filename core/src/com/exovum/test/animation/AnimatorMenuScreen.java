@@ -147,12 +147,13 @@ public class AnimatorMenuScreen implements Screen {
         helpButton.addListener(new ChangeListener() {
             public void changed (ChangeEvent event, Actor actor) {
                 Gdx.app.log("AnimatorMenuScreen", "Pressed helpButton");
+                game.setScreen(new InstructionsScreen(batch, game));
             }
         });
         creditsButton.addListener(new ChangeListener() {
             public void changed (ChangeEvent event, Actor actor) {
                 Gdx.app.log("AnimatorMenuScreen", "Pressed creditsButton");
-                game.setScreen(new CreditsScreen(batch, game, screen));
+                game.setScreen(new CreditsScreen(batch, game));
                 /*
                 *  Attempt at adding text next to the buttons.
                 *  Status: Unsuccessful. Updating the layout once adding the credits text
