@@ -10,10 +10,14 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.EventAction;
+import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -41,6 +45,7 @@ public class AnimatorMenuScreen implements Screen {
 
     private Stage stage;
     private Table mainTable, titleTable, baseTable;
+    private Table infoTable;
     private Skin skin;
     Actor root;
     ShapeRenderer renderer;
@@ -54,7 +59,7 @@ public class AnimatorMenuScreen implements Screen {
 
         stage = new Stage(new StretchViewport(800,480));
         Gdx.input.setInputProcessor(stage);
-        Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
+        final Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
 
         mainTable = new Table(skin);
         //mainTable.defaults().expand().fill().padBottom(4f).padTop(4f);
@@ -102,36 +107,69 @@ public class AnimatorMenuScreen implements Screen {
         exitButton.getLabel().setColor(buttonColor);
 
 
-        buttonTable.defaults().expand().fill().padBottom(10f).padTop(10f);
+        buttonTable.defaults().expand().fill().padBottom(8f).padTop(2f);
         buttonTable.add(playButton).width(180f).height(60f).row();
         buttonTable.add(helpButton).width(180f).height(60f).row();
         buttonTable.add(creditsButton).width(180f).height(60f).row();
         buttonTable.add(exitButton).width(180f).height(60f);
         buttonTable.padTop(30f).padBottom(30f);
 
+        infoTable = new Table(skin); // = new Label("", skin, "small-font");
+        //infoTable.setVisible(false);
+        infoTable.defaults().expand().fill().padBottom(8f).padTop(2f);
+        baseTable.add(infoTable);
+
+        // Add title table at the top of mainTable
         mainTable.add(titleTable).row();
-        mainTable.add(buttonTable);
+        // Add baseTable containing buttonTable to the next row of mainTable
+        //mainTable.add(buttonTable);
+        mainTable.add(baseTable);
+        // Add mainTable to the stage
         stage.addActor(mainTable);
 
         // Event Listeners for the menu buttons
         playButton.addListener(new ChangeListener() {
             public void changed (ChangeEvent event, Actor actor) {
-                Gdx.app.log("AnimatorMenuScreen", "Press playButton");
+                Gdx.app.log("AnimatorMenuScreen", "Pressed playButton");
             }
         });
         helpButton.addListener(new ChangeListener() {
             public void changed (ChangeEvent event, Actor actor) {
-                Gdx.app.log("AnimatorMenuScreen", "Press helpButton");
+                Gdx.app.log("AnimatorMenuScreen", "Pressed helpButton");
             }
         });
         creditsButton.addListener(new ChangeListener() {
             public void changed (ChangeEvent event, Actor actor) {
-                Gdx.app.log("AnimatorMenuScreen", "Press creditsButton");
+                Gdx.app.log("AnimatorMenuScreen", "Pressed creditsButton");
+                // If the table is visible and already showing credits, then 'minimize' infoTable
+                if(infoTable.isVisible() && infoTable.getName() != null && infoTable.getName().equals("Credits")) {
+                    Gdx.app.log("AnimatorMenuScreen", "Hide the credits menu");
+                    infoTable.setVisible(false);
+                    infoTable.clearChildren();
+                } else {
+                    Gdx.app.log("AnimatorMenuScreen", "Display the credits");
+                    // Otherwise, make the infoTable visible and set text to the credits
+                    infoTable.setVisible(true);
+                    infoTable.clearChildren();
+                    infoTable.center();
+                    Label musicLabel = new Label("Music\n" + "Pixel Peeker Polka - slower Kevin MacLeod (incompetech.com)\n" +
+                            "Licensed under Creative Commons: By Attribution 3.0 License\n" +
+                            "http://creativecommons.org/licenses/by/3.0/",
+                            skin, "small-font");
+                    musicLabel.setColor(Color.FIREBRICK);
+                    infoTable.addActor(musicLabel);
+                    infoTable.validate();
+                    baseTable.validate();
+                    infoTable.setFillParent(true);
+                    baseTable.center();
+                }
+                infoTable.setName("Credits");
+
             }
         });
         exitButton.addListener(new ChangeListener() {
             public void changed (ChangeEvent event, Actor actor) {
-                Gdx.app.log("AnimatorMenuScreen", "Press exitButton");
+                Gdx.app.log("AnimatorMenuScreen", "Pressed exitButton");
             }
         });
 
