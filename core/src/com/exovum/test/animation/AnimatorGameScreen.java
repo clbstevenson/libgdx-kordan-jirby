@@ -1,5 +1,6 @@
 package com.exovum.test.animation;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -538,7 +539,17 @@ public class AnimatorGameScreen implements Screen {
             glyphLayout.setText(smallFont, "Press the screen to continue!");
             smallFont.draw(batch, glyphLayout, camera.position.x - glyphLayout.width / 2,
                     camera.viewportHeight / 4 - glyphLayout.height * 2);
-            glyphLayout.setText(smallFont, "Press the back button or 'Escape' for the menu!");
+            switch(Gdx.app.getType()) {
+                case Android:
+                    glyphLayout.setText(smallFont, "Press the back button for the menu!");
+                    break;
+                case Desktop:
+                    glyphLayout.setText(smallFont, "Press 'Escape' for the menu!");
+                    break;
+                default:
+                    glyphLayout.setText(smallFont, "Press the back button or 'Escape' for the menu!");
+            }
+
             smallFont.draw(batch, glyphLayout, camera.position.x - glyphLayout.width / 2,
                     camera.viewportHeight / 4 - glyphLayout.height * 4);
             // If the player has lost, then display the losing text
