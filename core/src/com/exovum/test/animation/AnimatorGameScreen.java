@@ -291,7 +291,8 @@ public class AnimatorGameScreen implements Screen {
                     //AnimatorMenuScreen newMenu = new AnimatorMenuScreen(batch, game);
                     //game.setScreen(newMenu);
                     //game.setScreen(parent);
-                    ((Game) Gdx.app.getApplicationListener()).setScreen(parent);
+                    //((Game) Gdx.app.getApplicationListener()).setScreen(parent);
+                    ((Game) Gdx.app.getApplicationListener()).setScreen(new AnimatorMenuScreen(game));
                     return true;
                 }
                 return false;

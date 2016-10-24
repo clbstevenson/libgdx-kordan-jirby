@@ -122,7 +122,8 @@ public class CreditsScreen implements Screen {
                 Gdx.app.log("CreditsScreen", "Exiting to main menu");
                 //game.setScreen(new AnimatorMenuScreen(game));
                 //game.setScreen(parent);
-                ((Game) Gdx.app.getApplicationListener()).setScreen(parent);
+                //((Game) Gdx.app.getApplicationListener()).setScreen(parent);
+                ((Game) Gdx.app.getApplicationListener()).setScreen(new AnimatorMenuScreen(game));
             }
         });
         /*exitButton.addAction(run(new Runnable() {

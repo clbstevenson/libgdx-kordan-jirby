@@ -113,7 +113,8 @@ public class InstructionsScreen implements Screen {
                 Gdx.app.log("InstructionsScreen", "Exiting to main menu");
                 //game.setScreen(new AnimatorMenuScreen(game));
                 //game.setScreen(parent);
-                ((Game) Gdx.app.getApplicationListener()).setScreen(parent);
+                //((Game) Gdx.app.getApplicationListener()).setScreen(parent);
+                ((Game) Gdx.app.getApplicationListener()).setScreen(new AnimatorMenuScreen(game));
             }
         });
     }
