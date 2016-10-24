@@ -299,7 +299,6 @@ public class AnimatorGameScreen implements Screen {
             }
             @Override
             public boolean touchDown(int x, int y, int pointer, int button) {
-                /*
                 if (paused) {
                     // If the game is paused, then unpause
                     Gdx.app.log("AnimatorGameScreen", "touchDown from multiplexer");
@@ -315,8 +314,6 @@ public class AnimatorGameScreen implements Screen {
                     // else: player has not lost yet, so continue their same run without resetting
                 }
                 return true;
-                */
-                return false;
             }
 
             @Override

@@ -2,6 +2,8 @@ package com.exovum.test.animation;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -115,6 +117,25 @@ public class InstructionsScreen implements Screen {
                 //game.setScreen(parent);
                 //((Game) Gdx.app.getApplicationListener()).setScreen(parent);
                 ((Game) Gdx.app.getApplicationListener()).setScreen(new AnimatorMenuScreen(game));
+            }
+        });
+
+        Gdx.input.setInputProcessor(new InputAdapter(){
+            // If the back key is pressed, go to main menu
+            // This also handles the Android 'back' button
+            @Override
+            public boolean keyDown(int keycode) {
+                if(keycode == Input.Keys.BACK) {
+                    // Handle the back button
+                    Gdx.app.log("InstructionsScreen", "KeyDown: BACK pressed");
+                    //AnimatorMenuScreen newMenu = new AnimatorMenuScreen(batch, game);
+                    //game.setScreen(newMenu);
+                    //game.setScreen(parent);
+                    //((Game) Gdx.app.getApplicationListener()).setScreen(parent);
+                    ((Game) Gdx.app.getApplicationListener()).setScreen(new AnimatorMenuScreen(game));
+                    return true;
+                }
+                return false;
             }
         });
     }
