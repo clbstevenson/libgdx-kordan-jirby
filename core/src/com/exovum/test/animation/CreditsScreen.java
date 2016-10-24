@@ -30,6 +30,7 @@ public class CreditsScreen implements Screen {
 
     private SpriteBatch batch;
     private Game game;
+    private Screen parent;
 
     private Stage stage;
     private Table mainTable, baseTable;
@@ -37,9 +38,10 @@ public class CreditsScreen implements Screen {
 
     private Texture menuBackground;
 
-    public CreditsScreen(final SpriteBatch batch, final Game game) {
-        this.batch = batch;
+    public CreditsScreen(final Game game, Screen parentScreen) {
+        this.batch = new SpriteBatch();
         this.game = game;
+        this.parent = parentScreen;
 
         Gdx.app.log("CreditsScreen", "Creating CreditsScreen");
 
@@ -118,7 +120,9 @@ public class CreditsScreen implements Screen {
         exitButton.addListener(new ChangeListener() {
             public void changed(ChangeEvent event, Actor actor) {
                 Gdx.app.log("CreditsScreen", "Exiting to main menu");
-                game.setScreen(new AnimatorMenuScreen(batch, game));
+                //game.setScreen(new AnimatorMenuScreen(game));
+                //game.setScreen(parent);
+                ((Game) Gdx.app.getApplicationListener()).setScreen(parent);
             }
         });
         /*exitButton.addAction(run(new Runnable() {

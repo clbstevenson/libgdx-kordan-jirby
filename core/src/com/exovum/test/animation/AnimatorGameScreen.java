@@ -2,6 +2,7 @@ package com.exovum.test.animation;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
@@ -57,8 +58,11 @@ public class AnimatorGameScreen implements Screen {
 
     private Viewport viewport;
     private OrthographicCamera camera;
+
     private SpriteBatch batch;
     private Game game;
+    private Screen parent;
+
     private TextureAtlas atlas;
 
     private Stage stage;
@@ -85,9 +89,10 @@ public class AnimatorGameScreen implements Screen {
 
     private boolean paused;
 
-    public AnimatorGameScreen(SpriteBatch batch, final Game game) {
-        this.batch = batch;
+    public AnimatorGameScreen(final Game game, final Screen parentScreen) {
+        this.batch = new SpriteBatch();
         this.game = game;
+        this.parent = parentScreen;
 
         float w = Gdx.graphics.getWidth();
         float h = Gdx.graphics.getHeight();
@@ -114,9 +119,13 @@ public class AnimatorGameScreen implements Screen {
         camera = new OrthographicCamera(30, 30 * (h / w));
         viewport = new FitViewport(800, 480, camera);
         camera.update();
-        viewport.update(800, 480);
+        //viewport.update(800, 480);
 
-        stage = new Stage(viewport);
+        stage = new Stage(viewport, this.batch);
+        stage.setViewport(viewport);
+        stage.getViewport().update(800, 480);
+        camera.update();
+        camera.position.setZero();
         skin = new Skin(Gdx.files.internal("uiskin.json"));
 
         backButton = new TextButton("Back to Menu", skin, "small-font");
@@ -194,6 +203,7 @@ public class AnimatorGameScreen implements Screen {
 
             @Override
             public boolean tap(float x, float y, int count, int button) {
+                // Process tapping the screen when the game is paused
                 if (paused) {
                     // If the game is paused, then unpause
                     Gdx.app.log("AnimatorGameScreen", "tap from 2nd GestureDetector ");
@@ -205,7 +215,11 @@ public class AnimatorGameScreen implements Screen {
                     // If the game is paused AND the player has lost, then reset everthing
                     if (jkirbyAnimatedSprite.isLost()) {
                         Gdx.app.log("AnimatorGameScreen", "tapping when player has lost to reset");
-                        reset();
+                        //camera.position.setZero();
+                        //viewport.update(800, 480);
+                        //batch.flush();
+                        //game.setScreen(AnimatorTestGame.menu);
+                        //reset();
                         return true;
                     }
                     // else: player has not lost yet, so continue their same run without resetting
@@ -268,6 +282,20 @@ public class AnimatorGameScreen implements Screen {
                 };
                 return false;
             }
+
+            @Override
+            public boolean keyDown(int keycode) {
+                if(keycode == Input.Keys.BACK) {
+                    // Handle the back button
+                    Gdx.app.log("AnimatorGameScreen", "KeyDown: BACK pressed");
+                    //AnimatorMenuScreen newMenu = new AnimatorMenuScreen(batch, game);
+                    //game.setScreen(newMenu);
+                    //game.setScreen(parent);
+                    ((Game) Gdx.app.getApplicationListener()).setScreen(parent);
+                    return true;
+                }
+                return false;
+            }
             @Override
             public boolean touchDown(int x, int y, int pointer, int button) {
                 /*
@@ -296,6 +324,7 @@ public class AnimatorGameScreen implements Screen {
             }
         });
         Gdx.input.setInputProcessor(multiplexer);
+        Gdx.input.setCatchBackKey(true);
     }
 
     private void reset() {
@@ -465,8 +494,10 @@ public class AnimatorGameScreen implements Screen {
                         jkirbyAnimatedSprite.setJumping(false);
                         jkirbyAnimatedSprite.setLost(true);
                         jkirbyAnimatedSprite.setVelocity(0, 0);
-                        backButton.setPosition(camera.position.x,
-                                camera.viewportHeight / 2 );
+                        backButton.setPosition(stage.getViewport().getScreenWidth() / 2,
+                                stage.getViewport().getScreenHeight() / 2);
+                        //backButton.setPosition(camera.position.x - backButton.getWidth() / 2,
+                        //        camera.viewportHeight / 2 );
                         //backButton.setPosition(viewport.getScreenX(), viewport.getScreenY());
                         paused = true;
                         //reset();
@@ -540,15 +571,15 @@ public class AnimatorGameScreen implements Screen {
         // Draw the current frame of the AnimatedPlayer sprite
         jkirbyAnimatedSprite.draw(batch);
 
-        if(paused) {
-            stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
-            stage.draw();
-        }
-
         /*
          End SpriteBatch rendering
           */
         batch.end();
+
+        if(paused) {
+            stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
+            stage.draw();
+        }
     }
 
     private void handleInput() {

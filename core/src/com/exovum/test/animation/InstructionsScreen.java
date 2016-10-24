@@ -28,6 +28,7 @@ public class InstructionsScreen implements Screen {
 
     private SpriteBatch batch;
     private Game game;
+    private Screen parent;
 
     private Stage stage;
     private Table mainTable, baseTable;
@@ -35,9 +36,10 @@ public class InstructionsScreen implements Screen {
 
     private Texture menuBackground;
 
-    public InstructionsScreen(final SpriteBatch batch, final Game game) {
-        this.batch = batch;
+    public InstructionsScreen(final Game game, Screen parentScreen) {
+        this.batch = new SpriteBatch();
         this.game = game;
+        this.parent = parentScreen;
 
         Gdx.app.log("InstructionsScreen", "Creating InstructionsScreen");
 
@@ -109,7 +111,9 @@ public class InstructionsScreen implements Screen {
         exitButton.addListener(new ChangeListener() {
             public void changed(ChangeEvent event, Actor actor) {
                 Gdx.app.log("InstructionsScreen", "Exiting to main menu");
-                game.setScreen(new AnimatorMenuScreen(batch, game));
+                //game.setScreen(new AnimatorMenuScreen(game));
+                //game.setScreen(parent);
+                ((Game) Gdx.app.getApplicationListener()).setScreen(parent);
             }
         });
     }

@@ -47,7 +47,7 @@ public class AnimatorMenuScreen implements Screen {
 
     private SpriteBatch batch;
     private Game game;
-    private AnimatorMenuScreen screen;
+    private Screen screen;
 
     private Stage stage;
     private Table mainTable, titleTable, baseTable;
@@ -57,8 +57,8 @@ public class AnimatorMenuScreen implements Screen {
 
     private Texture menuBackground;
 
-    public AnimatorMenuScreen(final SpriteBatch batch, final Game game) {
-        this.batch = batch;
+    public AnimatorMenuScreen(final Game game) {
+        this.batch = new SpriteBatch();
         this.game = game;
         screen = this;
 
@@ -148,19 +148,22 @@ public class AnimatorMenuScreen implements Screen {
         playButton.addListener(new ChangeListener() {
             public void changed (ChangeEvent event, Actor actor) {
                 Gdx.app.log("AnimatorMenuScreen", "Pressed playButton");
-                game.setScreen(new AnimatorGameScreen(batch, game));
+                //game.setScreen(new AnimatorGameScreen(game, screen));
+                ((Game) Gdx.app.getApplicationListener()).setScreen(new AnimatorGameScreen(game, screen));
             }
         });
         helpButton.addListener(new ChangeListener() {
             public void changed (ChangeEvent event, Actor actor) {
                 Gdx.app.log("AnimatorMenuScreen", "Pressed helpButton");
-                game.setScreen(new InstructionsScreen(batch, game));
+                //game.setScreen(new InstructionsScreen(game, screen));
+                ((Game) Gdx.app.getApplicationListener()).setScreen(new InstructionsScreen(game, screen));
             }
         });
         creditsButton.addListener(new ChangeListener() {
             public void changed (ChangeEvent event, Actor actor) {
                 Gdx.app.log("AnimatorMenuScreen", "Pressed creditsButton");
-                game.setScreen(new CreditsScreen(batch, game));
+                //game.setScreen(new CreditsScreen(game, screen));
+                ((Game) Gdx.app.getApplicationListener()).setScreen(new CreditsScreen(game, screen));
                 /*
                 *  Attempt at adding text next to the buttons.
                 *  Status: Unsuccessful. Updating the layout once adding the credits text
@@ -216,8 +219,6 @@ public class AnimatorMenuScreen implements Screen {
         });
 
     }
-
-
 
     @Override
     public void show() {
