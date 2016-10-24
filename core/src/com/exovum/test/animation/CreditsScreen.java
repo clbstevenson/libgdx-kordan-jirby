@@ -4,6 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -129,7 +130,10 @@ public class CreditsScreen implements Screen {
             }
         });
 
-        Gdx.input.setInputProcessor(new InputAdapter(){
+        //Use an InputMultiplexer so that the Stage and keyDown input processors can both be used
+        InputMultiplexer multiplexer = new InputMultiplexer();
+        multiplexer.addProcessor(stage);
+        multiplexer.addProcessor(new InputAdapter(){
             // If the back key is pressed, go to main menu
             // This also handles the Android 'back' button
             @Override
@@ -147,15 +151,8 @@ public class CreditsScreen implements Screen {
                 return false;
             }
         });
-        /*exitButton.addAction(run(new Runnable() {
 
-            @Override
-            public void run() {
-                Gdx.app.log("CreditsScreen", "Exiting to main menu");
-                game.setScreen(new AnimatorMenuScreen(batch, game)); //prevScreen);
-            }
-        }));
-        */
+        Gdx.input.setInputProcessor(multiplexer);
     }
 
     @Override

@@ -4,12 +4,14 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -83,6 +85,7 @@ public class InstructionsScreen implements Screen {
 
         TextButton exitButton = new TextButton("Back to Menu", skin, "small-font");
 
+
         Table buttonTable = new Table(skin);
         baseTable.add(myHeader).row();
         baseTable.add(instructions).row();
@@ -100,6 +103,9 @@ public class InstructionsScreen implements Screen {
         buttonTable.add(exitButton).width(180f).height(60f);
         //buttonTable.padTop(20f).padBottom(20f);
         buttonTable.left();
+
+        final Rectangle exitRectangle = new Rectangle(exitButton.getX(), exitButton.getY(),
+                exitButton.getWidth(), exitButton.getHeight());
 
        // exitButton.padTop(2f);
 
@@ -120,7 +126,10 @@ public class InstructionsScreen implements Screen {
             }
         });
 
-        Gdx.input.setInputProcessor(new InputAdapter(){
+        //Use an InputMultiplexer so that the Stage and keyDown input processors can both be used
+        InputMultiplexer multiplexer = new InputMultiplexer();
+        multiplexer.addProcessor(stage);
+        multiplexer.addProcessor(new InputAdapter(){
             // If the back key is pressed, go to main menu
             // This also handles the Android 'back' button
             @Override
@@ -138,6 +147,8 @@ public class InstructionsScreen implements Screen {
                 return false;
             }
         });
+
+        Gdx.input.setInputProcessor(multiplexer);
     }
 
     @Override

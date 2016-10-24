@@ -131,12 +131,13 @@ public class AnimatorGameScreen implements Screen {
         backButton = new TextButton("Back to Menu", skin, "small-font");
         backButton.setWidth(180f);
         backButton.setHeight(60f);
-        stage.addActor(backButton);
+        //stage.addActor(backButton);
 
         backButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 Gdx.app.log("AnimatorGameScreen", "Pressed back button");
+                game.setScreen(new AnimatorMenuScreen(game));
             }
         });
         //camera.position.set(camera.viewportWidth / 2f, camera.viewportHeight / 2f, 0);
@@ -285,7 +286,7 @@ public class AnimatorGameScreen implements Screen {
 
             @Override
             public boolean keyDown(int keycode) {
-                if(keycode == Input.Keys.BACK) {
+                if(keycode == Input.Keys.BACK || keycode == Input.Keys.ESCAPE) {
                     // Handle the back button
                     Gdx.app.log("AnimatorGameScreen", "KeyDown: BACK pressed");
                     //AnimatorMenuScreen newMenu = new AnimatorMenuScreen(batch, game);
@@ -534,14 +535,19 @@ public class AnimatorGameScreen implements Screen {
         // Display some text when the game is paused
         if(paused) {
             // paused, so don't move camera or player but draw some text
-            glyphLayout.setText(font, "Press the screen to continue!");
-            font.draw(batch, glyphLayout, camera.position.x - glyphLayout.width / 2,
-                    camera.viewportHeight / 2 - glyphLayout.height * 6);
+            glyphLayout.setText(smallFont, "Press the screen to continue!");
+            smallFont.draw(batch, glyphLayout, camera.position.x - glyphLayout.width / 2,
+                    camera.viewportHeight / 4 - glyphLayout.height * 2);
+            glyphLayout.setText(smallFont, "Press the back button or 'Escape' for the menu!");
+            smallFont.draw(batch, glyphLayout, camera.position.x - glyphLayout.width / 2,
+                    camera.viewportHeight / 4 - glyphLayout.height * 4);
             // If the player has lost, then display the losing text
             if(jkirbyAnimatedSprite.isLost()) {
+                font.setColor(Color.FIREBRICK);
                 glyphLayout.setText(font, "Such disappoint. Much fail. Wow.");
                 font.draw(batch, glyphLayout, camera.position.x - glyphLayout.width / 2,
                         camera.viewportHeight / 2 - glyphLayout.height * 4);
+                font.setColor(Color.BLACK);
             }
 
         }
