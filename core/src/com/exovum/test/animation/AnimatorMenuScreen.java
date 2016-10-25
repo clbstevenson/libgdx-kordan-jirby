@@ -3,6 +3,7 @@ package com.exovum.test.animation;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
@@ -47,7 +48,7 @@ public class AnimatorMenuScreen implements Screen {
 
     private SpriteBatch batch;
     private Game game;
-    private AnimatorMenuScreen screen;
+    private Screen screen;
 
     private Stage stage;
     private Table mainTable, titleTable, baseTable;
@@ -55,14 +56,17 @@ public class AnimatorMenuScreen implements Screen {
     private Skin skin;
     private ShapeRenderer renderer;
 
+    private Music menuMusic;
+
     private Texture menuBackground;
 
-    public AnimatorMenuScreen(final SpriteBatch batch, final Game game) {
-        this.batch = batch;
+    public AnimatorMenuScreen(final Game game) {
+        this.batch = new SpriteBatch();
         this.game = game;
         screen = this;
 
         menuBackground = new Texture(Gdx.files.internal("beach-ocean-sea-bg/transparent-png/full_background.png"));
+        menuMusic = Gdx.audio.newMusic(Gdx.files.internal("Carpe Diem.mp3"));
 
         stage = new Stage(new FitViewport(800,480));
         Gdx.input.setInputProcessor(stage);
@@ -148,19 +152,22 @@ public class AnimatorMenuScreen implements Screen {
         playButton.addListener(new ChangeListener() {
             public void changed (ChangeEvent event, Actor actor) {
                 Gdx.app.log("AnimatorMenuScreen", "Pressed playButton");
-                game.setScreen(new AnimatorGameScreen(batch, game));
+                //game.setScreen(new AnimatorGameScreen(game, screen));
+                ((Game) Gdx.app.getApplicationListener()).setScreen(new AnimatorGameScreen(game, screen));
             }
         });
         helpButton.addListener(new ChangeListener() {
             public void changed (ChangeEvent event, Actor actor) {
                 Gdx.app.log("AnimatorMenuScreen", "Pressed helpButton");
-                game.setScreen(new InstructionsScreen(batch, game));
+                //game.setScreen(new InstructionsScreen(game, screen));
+                ((Game) Gdx.app.getApplicationListener()).setScreen(new InstructionsScreen(game, screen));
             }
         });
         creditsButton.addListener(new ChangeListener() {
             public void changed (ChangeEvent event, Actor actor) {
                 Gdx.app.log("AnimatorMenuScreen", "Pressed creditsButton");
-                game.setScreen(new CreditsScreen(batch, game));
+                //game.setScreen(new CreditsScreen(game, screen));
+                ((Game) Gdx.app.getApplicationListener()).setScreen(new CreditsScreen(game, screen));
                 /*
                 *  Attempt at adding text next to the buttons.
                 *  Status: Unsuccessful. Updating the layout once adding the credits text
@@ -217,28 +224,28 @@ public class AnimatorMenuScreen implements Screen {
 
     }
 
-
-
     @Override
     public void show() {
-
-    }
-
-
-    @Override
-    public void pause() {
-
-    }
-
-    @Override
-    public void resume() {
-
+        ((AnimatorTestGame)game).playMenuMusic();
     }
 
     @Override
     public void hide() {
-
+        //((AnimatorTestGame)game).pauseMenuMusic();
     }
+
+    @Override
+    public void pause() {
+        Gdx.app.log("AnimatorMenuScreen", "pausing menu screen");
+        ((AnimatorTestGame)game).pauseMenuMusic();
+    }
+
+    @Override
+    public void resume() {
+        ((AnimatorTestGame)game).playMenuMusic();
+    }
+
+
 
     @Override
     public void render(float delta) {

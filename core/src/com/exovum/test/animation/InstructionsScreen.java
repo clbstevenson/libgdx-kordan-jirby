@@ -2,12 +2,16 @@ package com.exovum.test.animation;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -28,6 +32,7 @@ public class InstructionsScreen implements Screen {
 
     private SpriteBatch batch;
     private Game game;
+    private Screen parent;
 
     private Stage stage;
     private Table mainTable, baseTable;
@@ -35,9 +40,10 @@ public class InstructionsScreen implements Screen {
 
     private Texture menuBackground;
 
-    public InstructionsScreen(final SpriteBatch batch, final Game game) {
-        this.batch = batch;
+    public InstructionsScreen(final Game game, Screen parentScreen) {
+        this.batch = new SpriteBatch();
         this.game = game;
+        this.parent = parentScreen;
 
         Gdx.app.log("InstructionsScreen", "Creating InstructionsScreen");
 
@@ -79,6 +85,7 @@ public class InstructionsScreen implements Screen {
 
         TextButton exitButton = new TextButton("Back to Menu", skin, "small-font");
 
+
         Table buttonTable = new Table(skin);
         baseTable.add(myHeader).row();
         baseTable.add(instructions).row();
@@ -97,6 +104,9 @@ public class InstructionsScreen implements Screen {
         //buttonTable.padTop(20f).padBottom(20f);
         buttonTable.left();
 
+        final Rectangle exitRectangle = new Rectangle(exitButton.getX(), exitButton.getY(),
+                exitButton.getWidth(), exitButton.getHeight());
+
        // exitButton.padTop(2f);
 
 
@@ -109,16 +119,47 @@ public class InstructionsScreen implements Screen {
         exitButton.addListener(new ChangeListener() {
             public void changed(ChangeEvent event, Actor actor) {
                 Gdx.app.log("InstructionsScreen", "Exiting to main menu");
-                game.setScreen(new AnimatorMenuScreen(batch, game));
+                //game.setScreen(new AnimatorMenuScreen(game));
+                //game.setScreen(parent);
+                //((Game) Gdx.app.getApplicationListener()).setScreen(parent);
+                ((Game) Gdx.app.getApplicationListener()).setScreen(new AnimatorMenuScreen(game));
             }
         });
+
+        //Use an InputMultiplexer so that the Stage and keyDown input processors can both be used
+        InputMultiplexer multiplexer = new InputMultiplexer();
+        multiplexer.addProcessor(stage);
+        multiplexer.addProcessor(new InputAdapter(){
+            // If the back key is pressed, go to main menu
+            // This also handles the Android 'back' button
+            @Override
+            public boolean keyDown(int keycode) {
+                if(keycode == Input.Keys.BACK) {
+                    // Handle the back button
+                    Gdx.app.log("InstructionsScreen", "KeyDown: BACK pressed");
+                    //AnimatorMenuScreen newMenu = new AnimatorMenuScreen(batch, game);
+                    //game.setScreen(newMenu);
+                    //game.setScreen(parent);
+                    //((Game) Gdx.app.getApplicationListener()).setScreen(parent);
+                    ((Game) Gdx.app.getApplicationListener()).setScreen(new AnimatorMenuScreen(game));
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        Gdx.input.setInputProcessor(multiplexer);
     }
 
     @Override
     public void show() {
-
+        //((AnimatorTestGame)game).playMenuMusic();
     }
 
+    @Override
+    public void hide() {
+        //((AnimatorTestGame)game).pauseMenuMusic();
+    }
 
     @Override
     public void pause() {
@@ -127,11 +168,6 @@ public class InstructionsScreen implements Screen {
 
     @Override
     public void resume() {
-
-    }
-
-    @Override
-    public void hide() {
 
     }
 

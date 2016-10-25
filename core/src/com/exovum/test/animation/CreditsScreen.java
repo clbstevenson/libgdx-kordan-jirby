@@ -2,6 +2,9 @@ package com.exovum.test.animation;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -30,6 +33,7 @@ public class CreditsScreen implements Screen {
 
     private SpriteBatch batch;
     private Game game;
+    private Screen parent;
 
     private Stage stage;
     private Table mainTable, baseTable;
@@ -37,9 +41,10 @@ public class CreditsScreen implements Screen {
 
     private Texture menuBackground;
 
-    public CreditsScreen(final SpriteBatch batch, final Game game) {
-        this.batch = batch;
+    public CreditsScreen(final Game game, Screen parentScreen) {
+        this.batch = new SpriteBatch();
         this.game = game;
+        this.parent = parentScreen;
 
         Gdx.app.log("CreditsScreen", "Creating CreditsScreen");
 
@@ -69,7 +74,7 @@ public class CreditsScreen implements Screen {
         musicHeader.setColor(Color.FIREBRICK);
         musicHeader.setAlignment(Align.center);
 
-        Label musicCredits = new Label("\"Pixel Peeker Polka - slower\", \"Rainbows\"\n" +
+        Label musicCredits = new Label("\"Hidden Past\", \"Pixel Peeker Polka - slower\", \"Rainbows\"\n" +
                 "Kevin MacLeod (incompetech.com)\n" +
                 "Licensed under Creative Commons: By Attribution 3.0\n" +
                 "http://creativecommons.org/licenses/by/3.0/", skin, "small-font");
@@ -118,23 +123,46 @@ public class CreditsScreen implements Screen {
         exitButton.addListener(new ChangeListener() {
             public void changed(ChangeEvent event, Actor actor) {
                 Gdx.app.log("CreditsScreen", "Exiting to main menu");
-                game.setScreen(new AnimatorMenuScreen(batch, game));
+                //game.setScreen(new AnimatorMenuScreen(game));
+                //game.setScreen(parent);
+                //((Game) Gdx.app.getApplicationListener()).setScreen(parent);
+                ((Game) Gdx.app.getApplicationListener()).setScreen(new AnimatorMenuScreen(game));
             }
         });
-        /*exitButton.addAction(run(new Runnable() {
 
+        //Use an InputMultiplexer so that the Stage and keyDown input processors can both be used
+        InputMultiplexer multiplexer = new InputMultiplexer();
+        multiplexer.addProcessor(stage);
+        multiplexer.addProcessor(new InputAdapter(){
+            // If the back key is pressed, go to main menu
+            // This also handles the Android 'back' button
             @Override
-            public void run() {
-                Gdx.app.log("CreditsScreen", "Exiting to main menu");
-                game.setScreen(new AnimatorMenuScreen(batch, game)); //prevScreen);
+            public boolean keyDown(int keycode) {
+                if(keycode == Input.Keys.BACK) {
+                    // Handle the back button
+                    Gdx.app.log("CreditsScreen", "KeyDown: BACK pressed");
+                    //AnimatorMenuScreen newMenu = new AnimatorMenuScreen(batch, game);
+                    //game.setScreen(newMenu);
+                    //game.setScreen(parent);
+                    //((Game) Gdx.app.getApplicationListener()).setScreen(parent);
+                    ((Game) Gdx.app.getApplicationListener()).setScreen(new AnimatorMenuScreen(game));
+                    return true;
+                }
+                return false;
             }
-        }));
-        */
+        });
+
+        Gdx.input.setInputProcessor(multiplexer);
     }
 
     @Override
     public void show() {
+        //((AnimatorTestGame)game).playMenuMusic();
+    }
 
+    @Override
+    public void hide() {
+        //((AnimatorTestGame)game).pauseMenuMusic();
     }
 
 
@@ -145,11 +173,6 @@ public class CreditsScreen implements Screen {
 
     @Override
     public void resume() {
-
-    }
-
-    @Override
-    public void hide() {
 
     }
 

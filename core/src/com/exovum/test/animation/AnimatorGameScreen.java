@@ -1,10 +1,14 @@
 package com.exovum.test.animation;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -22,6 +26,11 @@ import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.PooledLinkedList;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -52,9 +61,18 @@ public class AnimatorGameScreen implements Screen {
 
     private Viewport viewport;
     private OrthographicCamera camera;
+
     private SpriteBatch batch;
     private Game game;
+    private Screen parent;
+
+    private Sound crashSound;
+
     private TextureAtlas atlas;
+
+    private Stage stage;
+    private Skin skin;
+    private TextButton backButton;
 
     private Animation jkirbyAnimation;
     private AnimatedPlayer jkirbyAnimatedSprite;
@@ -76,16 +94,20 @@ public class AnimatorGameScreen implements Screen {
 
     private boolean paused;
 
-    public AnimatorGameScreen(SpriteBatch batch, final Game game) {
-        this.batch = batch;
+
+    public AnimatorGameScreen(final Game game, final Screen parentScreen) {
+        this.batch = new SpriteBatch();
         this.game = game;
+        this.parent = parentScreen;
+
+        crashSound = Gdx.audio.newSound(Gdx.files.internal("crash-1.wav"));
 
         float w = Gdx.graphics.getWidth();
         float h = Gdx.graphics.getHeight();
         // Set the floor to be 100 below the middle of the screen
         floorPos = -150;
         // Set the initial movement speed of camera/player [can be changed later]
-        moveSpeed = 4;
+        moveSpeed = 4.5f;
         // Initialize the player's distance traveled to 0; accumulates based on moveSpeed
         distanceTraveled = 0;
 
@@ -105,7 +127,27 @@ public class AnimatorGameScreen implements Screen {
         camera = new OrthographicCamera(30, 30 * (h / w));
         viewport = new FitViewport(800, 480, camera);
         camera.update();
-        viewport.update(800, 480);
+        //viewport.update(800, 480);
+
+        stage = new Stage(viewport, this.batch);
+        stage.setViewport(viewport);
+        stage.getViewport().update(800, 480);
+        camera.update();
+        camera.position.setZero();
+        skin = new Skin(Gdx.files.internal("uiskin.json"));
+
+        backButton = new TextButton("Back to Menu", skin, "small-font");
+        backButton.setWidth(180f);
+        backButton.setHeight(60f);
+        //stage.addActor(backButton);
+
+        backButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                Gdx.app.log("AnimatorGameScreen", "Pressed back button");
+                game.setScreen(new AnimatorMenuScreen(game));
+            }
+        });
         //camera.position.set(camera.viewportWidth / 2f, camera.viewportHeight / 2f, 0);
         //camera.update();
 
@@ -154,13 +196,15 @@ public class AnimatorGameScreen implements Screen {
         //tallTree.setPosition(shortTree.getX() + ((float)Math.random()) * 20 + 500, floorPos);
         addTrap(shortTree);
         tallTree.setPosition(nextTrapSlot(), floorPos);
-        addTrap(tallTree);
+        //addTrap(tallTree);
+        //addTrapSample(nextTrapSlotFrom(shortTree));
         //addTrap(new TrapSprite(shortTree.getTexture(), nextTrapSlotFrom(traps.get(traps.size -1)),
         //        (int)floorPos, 35, 50));
 
         // Setup the InputProcessors
         // Use a multiplexer to handle multiple InputProcessors for different events
         InputMultiplexer multiplexer = new InputMultiplexer();
+        multiplexer.addProcessor(stage);
         multiplexer.addProcessor(new GestureDetector(new GestureListener() {
             @Override
             public boolean touchDown(float x, float y, int pointer, int button) {
@@ -169,6 +213,7 @@ public class AnimatorGameScreen implements Screen {
 
             @Override
             public boolean tap(float x, float y, int count, int button) {
+                // Process tapping the screen when the game is paused
                 if (paused) {
                     // If the game is paused, then unpause
                     Gdx.app.log("AnimatorGameScreen", "tap from 2nd GestureDetector ");
@@ -180,7 +225,11 @@ public class AnimatorGameScreen implements Screen {
                     // If the game is paused AND the player has lost, then reset everthing
                     if (jkirbyAnimatedSprite.isLost()) {
                         Gdx.app.log("AnimatorGameScreen", "tapping when player has lost to reset");
-                        reset();
+                        //camera.position.setZero();
+                        //viewport.update(800, 480);
+                        //batch.flush();
+                        //game.setScreen(AnimatorTestGame.menu);
+                        //reset();
                         return true;
                     }
                     // else: player has not lost yet, so continue their same run without resetting
@@ -226,6 +275,7 @@ public class AnimatorGameScreen implements Screen {
         }));
         multiplexer.addProcessor(new GestureDetector(new AnimatorGestureListener(jkirbyAnimatedSprite)));
 
+
         multiplexer.addProcessor(new InputAdapter() {
 
             @Override
@@ -242,9 +292,23 @@ public class AnimatorGameScreen implements Screen {
                 };
                 return false;
             }
+
+            @Override
+            public boolean keyDown(int keycode) {
+                if(keycode == Input.Keys.BACK || keycode == Input.Keys.ESCAPE) {
+                    // Handle the back button
+                    Gdx.app.log("AnimatorGameScreen", "KeyDown: BACK pressed");
+                    //AnimatorMenuScreen newMenu = new AnimatorMenuScreen(batch, game);
+                    //game.setScreen(newMenu);
+                    //game.setScreen(parent);
+                    //((Game) Gdx.app.getApplicationListener()).setScreen(parent);
+                    ((Game) Gdx.app.getApplicationListener()).setScreen(new AnimatorMenuScreen(game));
+                    return true;
+                }
+                return false;
+            }
             @Override
             public boolean touchDown(int x, int y, int pointer, int button) {
-                /*
                 if (paused) {
                     // If the game is paused, then unpause
                     Gdx.app.log("AnimatorGameScreen", "touchDown from multiplexer");
@@ -253,15 +317,17 @@ public class AnimatorGameScreen implements Screen {
                     jkirbyAnimatedSprite.play();
                     //camera.lookAt(0, 0, 0);
                     //camera.lookAt();
-                    // If the game is paused AND the player has lost, then reset everthing
+                    // If the game is paused AND the player has lost, then reset everything
                     if (jkirbyAnimatedSprite.isLost()) {
                         reset();
+                        // Stop the lost game music
+                        ((AnimatorTestGame)game).stopLostMusic();
+                        // Pause the normal game music
+                        ((AnimatorTestGame)game).playGameMusic();
                     }
                     // else: player has not lost yet, so continue their same run without resetting
                 }
                 return true;
-                */
-                return false;
             }
 
             @Override
@@ -270,6 +336,7 @@ public class AnimatorGameScreen implements Screen {
             }
         });
         Gdx.input.setInputProcessor(multiplexer);
+        Gdx.input.setCatchBackKey(true);
     }
 
     private void reset() {
@@ -288,7 +355,8 @@ public class AnimatorGameScreen implements Screen {
         camera.position.set(0,0,0);
         viewport = new FitViewport(800, 480, camera);
         camera.update();
-        //viewport.update(800, 480);
+
+        stage.setViewport(viewport);
 
         //batch.flush();
         // reset the camera location
@@ -316,6 +384,7 @@ public class AnimatorGameScreen implements Screen {
         jkirbyAnimatedSprite.setVelocity(moveSpeed, 0);
         jkirbyAnimatedSprite.setLost(false);
         distanceTraveled = 0;
+        jkirbyAnimatedSprite.setLastDistance(0);
 
         // Reset the traps
         for(TrapSprite s: traps) {
@@ -330,9 +399,15 @@ public class AnimatorGameScreen implements Screen {
         shortTree.setSize(35, 40);
         tallTree.setSize(50, 80);
         //tallTree.setPosition(shortTree.getX() + ((float)Math.random()) * 20 + 500, floorPos);
-        tallTree.setPosition(nextTrapSlotFrom(shortTree), floorPos);
+        //tallTree.setPosition(nextTrapSlotFrom(shortTree), floorPos);
         addTrap(shortTree);
-        addTrap(tallTree);
+        tallTree.setPosition(nextTrapSlot(), floorPos);
+        //addTrap(tallTree);
+        //tallTree.setPosition(nextTrapSlot(), floorPos);
+        //addTrap(tallTree);
+        //addTrapSample(nextTrapSlotFrom(shortTree));
+        // Use the addTrapSample instead
+        //addTrapSample(nextTrapSlot());
         //addTrap(new TrapSprite(shortTree.getTexture(), nextTrapSlotFrom(traps.get(traps.size -1)),
          //       (int)floorPos, 35, 50));
 
@@ -349,6 +424,9 @@ public class AnimatorGameScreen implements Screen {
                         jkirbyAnimatedSprite.getVelocityX(), 0, 0);
                 distanceTraveled += jkirbyAnimatedSprite.getVelocityX();
                 jkirbyAnimatedSprite.updateVelocity(distanceTraveled);
+
+                //backButton.setPosition(camera.position.x - backButton.getWidth() / 2,
+                //        camera.viewportHeight / 2);
             }
 
             // Move the player animation with the camera [based on moveSpeed]
@@ -408,8 +486,8 @@ public class AnimatorGameScreen implements Screen {
 
         // If the difference between nextTrapPos and distanceTraveled is LESS
         // than the width of the camera viewport, spawn a new trap
-        if(nextTrapPos - distanceTraveled < camera.viewportWidth * 1.5f) {
-        //if(traps.size < 5) {
+        if(nextTrapPos - distanceTraveled < camera.viewportWidth * 2f) {
+
             //TrapSprite testTrap = new TrapSprite(new Texture(Gdx.files.internal("flat-tree-game-ornaments/tree-1.png")));
             //testTrap.setPosition(camera.viewportWidth * 3, floorPos);
             //testTrap.setSize(35, 40);
@@ -435,8 +513,20 @@ public class AnimatorGameScreen implements Screen {
                         jkirbyAnimatedSprite.setJumping(false);
                         jkirbyAnimatedSprite.setLost(true);
                         jkirbyAnimatedSprite.setVelocity(0, 0);
+                        backButton.setPosition(stage.getViewport().getScreenWidth() / 2,
+                                stage.getViewport().getScreenHeight() / 2);
+                        //backButton.setPosition(camera.position.x - backButton.getWidth() / 2,
+                        //        camera.viewportHeight / 2 );
+                        //backButton.setPosition(viewport.getScreenX(), viewport.getScreenY());
                         paused = true;
+
+                        // Play the lost game music
+                        ((AnimatorTestGame)game).playLostMusic();
+                        // Pause the normal game music
+                        ((AnimatorTestGame)game).pauseGameMusic();
                         //reset();
+                        // Play the crash sound effect
+                        crashSound.play(0.5f);
                     }
                 }
             }
@@ -472,14 +562,29 @@ public class AnimatorGameScreen implements Screen {
         // Display some text when the game is paused
         if(paused) {
             // paused, so don't move camera or player but draw some text
-            glyphLayout.setText(font, "Press the screen to continue!");
-            font.draw(batch, glyphLayout, camera.position.x - glyphLayout.width / 2,
-                    camera.viewportHeight / 2 - glyphLayout.height * 6);
+            glyphLayout.setText(smallFont, "Press the screen to continue!");
+            smallFont.draw(batch, glyphLayout, camera.position.x - glyphLayout.width / 2,
+                    camera.viewportHeight / 4 - glyphLayout.height * 2);
+            switch(Gdx.app.getType()) {
+                case Android:
+                    glyphLayout.setText(smallFont, "Press the back button for the menu!");
+                    break;
+                case Desktop:
+                    glyphLayout.setText(smallFont, "Press 'Escape' for the menu!");
+                    break;
+                default:
+                    glyphLayout.setText(smallFont, "Press the back button or 'Escape' for the menu!");
+            }
+
+            smallFont.draw(batch, glyphLayout, camera.position.x - glyphLayout.width / 2,
+                    camera.viewportHeight / 4 - glyphLayout.height * 4);
             // If the player has lost, then display the losing text
             if(jkirbyAnimatedSprite.isLost()) {
-                glyphLayout.setText(font, "Such disappoint. Much fail. Wow.");
+                font.setColor(Color.FIREBRICK);
+                glyphLayout.setText(font, "RIP in Peace");
                 font.draw(batch, glyphLayout, camera.position.x - glyphLayout.width / 2,
                         camera.viewportHeight / 2 - glyphLayout.height * 4);
+                font.setColor(Color.BLACK);
             }
 
         }
@@ -511,6 +616,11 @@ public class AnimatorGameScreen implements Screen {
          End SpriteBatch rendering
           */
         batch.end();
+
+        if(paused) {
+            stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
+            stage.draw();
+        }
     }
 
     private void handleInput() {
@@ -554,7 +664,8 @@ public class AnimatorGameScreen implements Screen {
 
     public void addTrapSample(int trapPos) {
         int randomValue = ((int)(Math.random() * 10));
-        Gdx.app.log("AnimatorGameScreen", "addTrapSample: randomValue = " + randomValue);
+        Gdx.app.log("AnimatorGameScreen", "addTrapSample: randomValue = " + randomValue +
+        ";  trapPos = " + trapPos);
         if(randomValue < 6) {
             // 60% chance to get a small tree
             TrapSprite testTrap = new TrapSprite(new Texture(Gdx.files.internal("flat-tree-game-ornaments/tree-1.png")));
@@ -588,15 +699,25 @@ public class AnimatorGameScreen implements Screen {
 
     // Returns the next valid position for a trap based on the given Trap's location
     private int nextTrapSlotFrom(TrapSprite trap) {
-        float randomDist = ((float)Math.random()) * (2000 / jkirbyAnimatedSprite.getVelocityX());
-        int nextSlot = (int)(trap.getX() + trap.getWidth() + 400 + randomDist);
+        float randomDist = ((float)Math.random()) * (5000 / jkirbyAnimatedSprite.getVelocityX());
+        float randomRange= ((int)(Math.random() * 20));
+        float minDist = 400;
+        float increment = minDist + randomRange * (jkirbyAnimatedSprite.getVelocityX() * 50);
+        //int nextSlot = (int)(trap.getX() + trap.getWidth() + 400 + randomDist);
+        int nextSlot = (int)(trap.getX() + trap.getWidth() + increment);
         //Gdx.app.log("AnimatorGameScreen", "nextTrapSlotFrom() = " + nextSlot);
         return nextSlot;
     }
 
     @Override
     public void show() {
+        ((AnimatorTestGame)game).stopMenuMusic();
+        ((AnimatorTestGame)game).playGameMusic();
+    }
 
+    @Override
+    public void hide() {
+        ((AnimatorTestGame)game).stopGameMusic();
     }
 
     @Override
@@ -605,6 +726,7 @@ public class AnimatorGameScreen implements Screen {
         //camera.viewportHeight = camera.viewportWidth * height/width;
         Gdx.app.log("AnimatorGameScreen", "Resizing to " + width + " x " + height);
         viewport.update(width, height);
+        stage.setViewport(viewport);
         camera.update();
     }
 
@@ -612,17 +734,22 @@ public class AnimatorGameScreen implements Screen {
     public void pause() {
         paused = true;
         jkirbyAnimatedSprite.pause();
+        if(jkirbyAnimatedSprite.isLost()) {
+            ((AnimatorTestGame)game).pauseLostMusic();
+        } else {
+            ((AnimatorTestGame)game).pauseGameMusic();
+        }
     }
 
     @Override
     public void resume() {
         //paused = false;
         //jkirbyAnimatedSprite.play();
-    }
-
-    @Override
-    public void hide() {
-
+        if(jkirbyAnimatedSprite.isLost()) {
+            ((AnimatorTestGame)game).playLostMusic();
+        } else {
+            ((AnimatorTestGame)game).playGameMusic();
+        }
     }
 
     @Override
@@ -637,6 +764,8 @@ public class AnimatorGameScreen implements Screen {
         jkirbyAnimatedSprite.getTexture().dispose();
         font.dispose();
         generator.dispose();
+        stage.dispose();
+        skin.dispose();
         batch.dispose();
     }
 }

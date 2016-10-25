@@ -74,7 +74,9 @@ public class AnimatorGestureListener implements GestureDetector.GestureListener 
             float convertedJumpSpeed = velocityY /  -500;
             // Only bother with swipe "ups", or positive y-velocities
             if(convertedJumpSpeed < 0)
-                convertedJumpSpeed = 0;
+                // Flip the sign of fling downs so they act like fling ups
+                convertedJumpSpeed *= -1;
+                //convertedJumpSpeed = 0;
             // do some integer conversion for removing non-regular values, and base jump value is 20
             convertedJumpSpeed = ((int) convertedJumpSpeed) * 2  + 17;
             Gdx.app.log("AnimatorGestureListener", "convertedJumpSpeed: " + convertedJumpSpeed);
