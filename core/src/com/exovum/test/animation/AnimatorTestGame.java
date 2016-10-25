@@ -38,8 +38,8 @@ public class AnimatorTestGame extends Game {
         gameMusic = Gdx.audio.newMusic(Gdx.files.internal("Pixel Peeker Polka - slower.mp3"));
         menuMusic.setLooping(true);
         gameMusic.setLooping(true);
-        menuMusic.setVolume(0.5f);
-        gameMusic.setVolume(0.5f);
+        menuMusic.setVolume(0.3f);
+        gameMusic.setVolume(0.3f);
         //music.play();
         //music.setLooping(true);
         batch = new SpriteBatch();

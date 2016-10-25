@@ -1,6 +1,7 @@
 package com.exovum.test.animation;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.math.Vector2;
 
@@ -33,16 +34,26 @@ class AnimatedPlayer extends AnimatedSprite {
     // Last known distance value when AnimatedPlayer was updated
     private float lastDistance;
 
+    // Sound affects used when the player jumps
+    private Sound jump, longJump;
+
+
     AnimatedPlayer(Animation animation, float moveSpeed) {
         super(animation);
         initVelocity(moveSpeed);
         lastDistance = 0;
+
+        jump = Gdx.audio.newSound(Gdx.files.internal("short-jump.wav"));
+        longJump = Gdx.audio.newSound(Gdx.files.internal("long-jump-3.wav"));
     }
 
     public AnimatedPlayer(Animation animation, boolean keepSize, float moveSpeed) {
         super(animation, keepSize);
         initVelocity(moveSpeed);
         lastDistance = 0;
+
+        jump = Gdx.audio.newSound(Gdx.files.internal("short-jump.wav"));
+        longJump = Gdx.audio.newSound(Gdx.files.internal("long-jump.wav"));
     }
 
     private void initVelocity(float moveSpeed) {
@@ -270,6 +281,15 @@ class AnimatedPlayer extends AnimatedSprite {
             setVelocityY(y);
             setVelocityX(velocity.x + y / 2.5f);
             jumping = true;
+
+            // play the jump sound
+            // if the y-velocity is high enough, then play long-jump sound
+            if(y > 18) {
+                longJump.play(0.5f);
+            } else {
+                // play the normal jump sound
+                jump.play(0.5f);
+            }
         }
         // otherwise, do nothing
     }

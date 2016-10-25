@@ -8,6 +8,7 @@ import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -93,12 +94,12 @@ public class AnimatorGameScreen implements Screen {
 
     private boolean paused;
 
+
     public AnimatorGameScreen(final Game game, final Screen parentScreen) {
         this.batch = new SpriteBatch();
         this.game = game;
         this.parent = parentScreen;
 
-        gameMusic = Gdx.audio.newMusic(Gdx.files.internal("Pixel Peeker Polka - slower.mp3"));
 
         float w = Gdx.graphics.getWidth();
         float h = Gdx.graphics.getHeight();
