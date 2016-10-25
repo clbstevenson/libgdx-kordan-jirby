@@ -3,6 +3,7 @@ package com.exovum.test.animation;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
@@ -55,6 +56,8 @@ public class AnimatorMenuScreen implements Screen {
     private Skin skin;
     private ShapeRenderer renderer;
 
+    private Music menuMusic;
+
     private Texture menuBackground;
 
     public AnimatorMenuScreen(final Game game) {
@@ -63,6 +66,7 @@ public class AnimatorMenuScreen implements Screen {
         screen = this;
 
         menuBackground = new Texture(Gdx.files.internal("beach-ocean-sea-bg/transparent-png/full_background.png"));
+        menuMusic = Gdx.audio.newMusic(Gdx.files.internal("Carpe Diem.mp3"));
 
         stage = new Stage(new FitViewport(800,480));
         Gdx.input.setInputProcessor(stage);
@@ -222,24 +226,26 @@ public class AnimatorMenuScreen implements Screen {
 
     @Override
     public void show() {
-
-    }
-
-
-    @Override
-    public void pause() {
-
-    }
-
-    @Override
-    public void resume() {
-
+        ((AnimatorTestGame)game).playMenuMusic();
     }
 
     @Override
     public void hide() {
-
+        //((AnimatorTestGame)game).pauseMenuMusic();
     }
+
+    @Override
+    public void pause() {
+        Gdx.app.log("AnimatorMenuScreen", "pausing menu screen");
+        ((AnimatorTestGame)game).pauseMenuMusic();
+    }
+
+    @Override
+    public void resume() {
+        ((AnimatorTestGame)game).playMenuMusic();
+    }
+
+
 
     @Override
     public void render(float delta) {

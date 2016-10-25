@@ -157,7 +157,12 @@ public class CreditsScreen implements Screen {
 
     @Override
     public void show() {
+        //((AnimatorTestGame)game).playMenuMusic();
+    }
 
+    @Override
+    public void hide() {
+        //((AnimatorTestGame)game).pauseMenuMusic();
     }
 
 
@@ -168,11 +173,6 @@ public class CreditsScreen implements Screen {
 
     @Override
     public void resume() {
-
-    }
-
-    @Override
-    public void hide() {
 
     }
 

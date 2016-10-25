@@ -153,9 +153,13 @@ public class InstructionsScreen implements Screen {
 
     @Override
     public void show() {
-
+        //((AnimatorTestGame)game).playMenuMusic();
     }
 
+    @Override
+    public void hide() {
+        //((AnimatorTestGame)game).pauseMenuMusic();
+    }
 
     @Override
     public void pause() {
@@ -164,11 +168,6 @@ public class InstructionsScreen implements Screen {
 
     @Override
     public void resume() {
-
-    }
-
-    @Override
-    public void hide() {
 
     }
 

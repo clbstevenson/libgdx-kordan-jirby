@@ -4,6 +4,7 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -27,11 +28,20 @@ public class AnimatorTestGame extends Game {
     protected static CreditsScreen credits;
     protected static InstructionsScreen instructions;
 
+    public Music menuMusic, gameMusic;
 
     private float rotationSpeed;
 
     public void create() {
 
+        menuMusic = Gdx.audio.newMusic(Gdx.files.internal("Carpe Diem.mp3"));
+        gameMusic = Gdx.audio.newMusic(Gdx.files.internal("Pixel Peeker Polka - slower.mp3"));
+        menuMusic.setLooping(true);
+        gameMusic.setLooping(true);
+        menuMusic.setVolume(0.5f);
+        gameMusic.setVolume(0.5f);
+        //music.play();
+        //music.setLooping(true);
         batch = new SpriteBatch();
 
         menu = new AnimatorMenuScreen(this);
@@ -43,4 +53,43 @@ public class AnimatorTestGame extends Game {
 
     }
 
+    @Override
+    public void dispose() {
+        menuMusic.dispose();
+        gameMusic.dispose();
+    }
+
+    public Music getMenuMusic() {
+        return menuMusic;
+    }
+    public Music getGameMusic() {
+        return gameMusic;
+    }
+
+    public void playMenuMusic() {
+        if(!menuMusic.isPlaying()) {
+            menuMusic.play();
+
+        }
+    }
+    public void stopMenuMusic() {
+        menuMusic.stop();
+    }
+
+    public void pauseMenuMusic() {
+        menuMusic.pause();
+    }
+
+    public void playGameMusic() {
+        if(!gameMusic.isPlaying()) {
+            gameMusic.play();
+        }
+    }
+    public void stopGameMusic() {
+        gameMusic.stop();
+    }
+
+    public void pauseGameMusic() {
+        gameMusic.pause();
+    }
 }

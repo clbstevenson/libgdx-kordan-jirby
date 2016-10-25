@@ -7,6 +7,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -64,6 +65,8 @@ public class AnimatorGameScreen implements Screen {
     private Game game;
     private Screen parent;
 
+    private Music gameMusic;
+
     private TextureAtlas atlas;
 
     private Stage stage;
@@ -94,6 +97,8 @@ public class AnimatorGameScreen implements Screen {
         this.batch = new SpriteBatch();
         this.game = game;
         this.parent = parentScreen;
+
+        gameMusic = Gdx.audio.newMusic(Gdx.files.internal("Pixel Peeker Polka - slower.mp3"));
 
         float w = Gdx.graphics.getWidth();
         float h = Gdx.graphics.getHeight();
@@ -189,7 +194,8 @@ public class AnimatorGameScreen implements Screen {
         //tallTree.setPosition(shortTree.getX() + ((float)Math.random()) * 20 + 500, floorPos);
         addTrap(shortTree);
         tallTree.setPosition(nextTrapSlot(), floorPos);
-        addTrap(tallTree);
+        //addTrap(tallTree);
+        //addTrapSample(nextTrapSlotFrom(shortTree));
         //addTrap(new TrapSprite(shortTree.getTexture(), nextTrapSlotFrom(traps.get(traps.size -1)),
         //        (int)floorPos, 35, 50));
 
@@ -387,10 +393,13 @@ public class AnimatorGameScreen implements Screen {
         shortTree.setSize(35, 40);
         tallTree.setSize(50, 80);
         //tallTree.setPosition(shortTree.getX() + ((float)Math.random()) * 20 + 500, floorPos);
-        tallTree.setPosition(nextTrapSlotFrom(shortTree), floorPos);
+        //tallTree.setPosition(nextTrapSlotFrom(shortTree), floorPos);
         addTrap(shortTree);
+        tallTree.setPosition(nextTrapSlot(), floorPos);
+        //addTrap(tallTree);
         //tallTree.setPosition(nextTrapSlot(), floorPos);
-        addTrap(tallTree);
+        //addTrap(tallTree);
+        //addTrapSample(nextTrapSlotFrom(shortTree));
         // Use the addTrapSample instead
         //addTrapSample(nextTrapSlot());
         //addTrap(new TrapSprite(shortTree.getTexture(), nextTrapSlotFrom(traps.get(traps.size -1)),
@@ -689,7 +698,13 @@ public class AnimatorGameScreen implements Screen {
 
     @Override
     public void show() {
+        ((AnimatorTestGame)game).stopMenuMusic();
+        ((AnimatorTestGame)game).playGameMusic();
+    }
 
+    @Override
+    public void hide() {
+        ((AnimatorTestGame)game).stopGameMusic();
     }
 
     @Override
@@ -706,17 +721,14 @@ public class AnimatorGameScreen implements Screen {
     public void pause() {
         paused = true;
         jkirbyAnimatedSprite.pause();
+        ((AnimatorTestGame)game).pauseGameMusic();
     }
 
     @Override
     public void resume() {
         //paused = false;
         //jkirbyAnimatedSprite.play();
-    }
-
-    @Override
-    public void hide() {
-
+        ((AnimatorTestGame)game).playGameMusic();
     }
 
     @Override
