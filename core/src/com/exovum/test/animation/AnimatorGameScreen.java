@@ -717,7 +717,12 @@ public class AnimatorGameScreen implements Screen {
 
     @Override
     public void hide() {
-        ((AnimatorTestGame)game).stopGameMusic();
+        if(jkirbyAnimatedSprite.isLost()) {
+            ((AnimatorTestGame)game).pauseLostMusic();
+        } else {
+            ((AnimatorTestGame)game).stopGameMusic();
+        }
+
     }
 
     @Override
