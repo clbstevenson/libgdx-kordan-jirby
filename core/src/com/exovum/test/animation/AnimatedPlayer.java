@@ -285,10 +285,10 @@ class AnimatedPlayer extends AnimatedSprite {
             // play the jump sound
             // if the y-velocity is high enough, then play long-jump sound
             if(y > 18) {
-                longJump.play(0.5f);
+                longJump.play(0.25f);
             } else {
                 // play the normal jump sound
-                jump.play(0.5f);
+                jump.play(0.25f);
             }
         }
         // otherwise, do nothing

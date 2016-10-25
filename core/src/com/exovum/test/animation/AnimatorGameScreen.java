@@ -321,7 +321,7 @@ public class AnimatorGameScreen implements Screen {
                     if (jkirbyAnimatedSprite.isLost()) {
                         reset();
                         // Stop the lost game music
-                        ((AnimatorTestGame)game).stopLostMusic();
+                        ((AnimatorTestGame)game).pauseLostMusic();
                         // Pause the normal game music
                         ((AnimatorTestGame)game).playGameMusic();
                     }
