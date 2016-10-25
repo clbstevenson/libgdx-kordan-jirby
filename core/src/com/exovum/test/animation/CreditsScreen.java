@@ -74,7 +74,7 @@ public class CreditsScreen implements Screen {
         musicHeader.setColor(Color.FIREBRICK);
         musicHeader.setAlignment(Align.center);
 
-        Label musicCredits = new Label("\"Hidden Past\", \"Pixel Peeker Polka - slower\", \"Rainbows\"\n" +
+        Label musicCredits = new Label("\"Capre Diem\", \"Hidden Past\", \"Pixel Peeker Polka - slower\" " +
                 "Kevin MacLeod (incompetech.com)\n" +
                 "Licensed under Creative Commons: By Attribution 3.0\n" +
                 "http://creativecommons.org/licenses/by/3.0/", skin, "small-font");
