@@ -100,7 +100,7 @@ public class AnimatorGameScreen implements Screen {
         // Set the floor to be 100 below the middle of the screen
         floorPos = -150;
         // Set the initial movement speed of camera/player [can be changed later]
-        moveSpeed = 4;
+        moveSpeed = 4.5f;
         // Initialize the player's distance traveled to 0; accumulates based on moveSpeed
         distanceTraveled = 0;
 
@@ -372,6 +372,7 @@ public class AnimatorGameScreen implements Screen {
         jkirbyAnimatedSprite.setVelocity(moveSpeed, 0);
         jkirbyAnimatedSprite.setLost(false);
         distanceTraveled = 0;
+        jkirbyAnimatedSprite.setLastDistance(0);
 
         // Reset the traps
         for(TrapSprite s: traps) {
@@ -388,7 +389,10 @@ public class AnimatorGameScreen implements Screen {
         //tallTree.setPosition(shortTree.getX() + ((float)Math.random()) * 20 + 500, floorPos);
         tallTree.setPosition(nextTrapSlotFrom(shortTree), floorPos);
         addTrap(shortTree);
+        //tallTree.setPosition(nextTrapSlot(), floorPos);
         addTrap(tallTree);
+        // Use the addTrapSample instead
+        //addTrapSample(nextTrapSlot());
         //addTrap(new TrapSprite(shortTree.getTexture(), nextTrapSlotFrom(traps.get(traps.size -1)),
          //       (int)floorPos, 35, 50));
 
@@ -467,8 +471,8 @@ public class AnimatorGameScreen implements Screen {
 
         // If the difference between nextTrapPos and distanceTraveled is LESS
         // than the width of the camera viewport, spawn a new trap
-        if(nextTrapPos - distanceTraveled < camera.viewportWidth * 1.5f) {
-        //if(traps.size < 5) {
+        if(nextTrapPos - distanceTraveled < camera.viewportWidth * 2f) {
+
             //TrapSprite testTrap = new TrapSprite(new Texture(Gdx.files.internal("flat-tree-game-ornaments/tree-1.png")));
             //testTrap.setPosition(camera.viewportWidth * 3, floorPos);
             //testTrap.setSize(35, 40);
@@ -638,7 +642,8 @@ public class AnimatorGameScreen implements Screen {
 
     public void addTrapSample(int trapPos) {
         int randomValue = ((int)(Math.random() * 10));
-        Gdx.app.log("AnimatorGameScreen", "addTrapSample: randomValue = " + randomValue);
+        Gdx.app.log("AnimatorGameScreen", "addTrapSample: randomValue = " + randomValue +
+        ";  trapPos = " + trapPos);
         if(randomValue < 6) {
             // 60% chance to get a small tree
             TrapSprite testTrap = new TrapSprite(new Texture(Gdx.files.internal("flat-tree-game-ornaments/tree-1.png")));
@@ -672,8 +677,12 @@ public class AnimatorGameScreen implements Screen {
 
     // Returns the next valid position for a trap based on the given Trap's location
     private int nextTrapSlotFrom(TrapSprite trap) {
-        float randomDist = ((float)Math.random()) * (2000 / jkirbyAnimatedSprite.getVelocityX());
-        int nextSlot = (int)(trap.getX() + trap.getWidth() + 400 + randomDist);
+        float randomDist = ((float)Math.random()) * (5000 / jkirbyAnimatedSprite.getVelocityX());
+        float randomRange= ((int)(Math.random() * 20));
+        float minDist = 400;
+        float increment = minDist + randomRange * (jkirbyAnimatedSprite.getVelocityX() * 50);
+        //int nextSlot = (int)(trap.getX() + trap.getWidth() + 400 + randomDist);
+        int nextSlot = (int)(trap.getX() + trap.getWidth() + increment);
         //Gdx.app.log("AnimatorGameScreen", "nextTrapSlotFrom() = " + nextSlot);
         return nextSlot;
     }

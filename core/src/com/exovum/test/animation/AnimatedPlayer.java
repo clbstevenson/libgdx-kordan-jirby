@@ -30,14 +30,19 @@ class AnimatedPlayer extends AnimatedSprite {
     // A vector containing AnimatedPlayer's x- and y-direction acceleration
     private Vector2f acceleration;
 
+    // Last known distance value when AnimatedPlayer was updated
+    private float lastDistance;
+
     AnimatedPlayer(Animation animation, float moveSpeed) {
         super(animation);
         initVelocity(moveSpeed);
+        lastDistance = 0;
     }
 
     public AnimatedPlayer(Animation animation, boolean keepSize, float moveSpeed) {
         super(animation, keepSize);
         initVelocity(moveSpeed);
+        lastDistance = 0;
     }
 
     private void initVelocity(float moveSpeed) {
@@ -171,9 +176,19 @@ class AnimatedPlayer extends AnimatedSprite {
         // Limit horizontal speed to 100
         if(velocity.x < 100) {
             // scale the threshold for speed increase based on current speed
-            if (((int) distance / (500 * velocity.x)) > velocity.x - 1) {
-                velocity.x++;
+            // If the current distance is (250 * v.x) away from distance of last update,
+            // then increase velocity.x
+            if(distance - lastDistance > 1500) {
+                Gdx.app.log("AnimatedPlayer", "update velocity.x");
+                // increment velocity.x by some value
+                velocity.x += 0.10f;
+
+                // set lastDistance to the current distance
+                lastDistance = distance;
             }
+            /*if (((int) distance / (500 * velocity.x)) > velocity.x - 1) {
+                velocity.x++;
+            }*/
         }
     }
 
@@ -219,6 +234,14 @@ class AnimatedPlayer extends AnimatedSprite {
 
     public void setRunning(boolean running) {
         this.running = running;
+    }
+
+    public void setLastDistance(float lastDist) {
+        lastDistance = lastDist;
+    }
+
+    public float getLastDistance() {
+        return lastDistance;
     }
 
     public boolean isLost() {
