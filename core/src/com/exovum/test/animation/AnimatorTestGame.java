@@ -28,7 +28,7 @@ public class AnimatorTestGame extends Game {
     protected static CreditsScreen credits;
     protected static InstructionsScreen instructions;
 
-    public Music menuMusic, gameMusic;
+    public Music menuMusic, gameMusic, lostMusic;
 
     private float rotationSpeed;
 
@@ -36,10 +36,14 @@ public class AnimatorTestGame extends Game {
 
         menuMusic = Gdx.audio.newMusic(Gdx.files.internal("Carpe Diem.mp3"));
         gameMusic = Gdx.audio.newMusic(Gdx.files.internal("Pixel Peeker Polka - slower.mp3"));
+        lostMusic = Gdx.audio.newMusic(Gdx.files.internal("Hidden Past.mp3"));
         menuMusic.setLooping(true);
         gameMusic.setLooping(true);
+        lostMusic.setLooping(true);
         menuMusic.setVolume(0.3f);
         gameMusic.setVolume(0.3f);
+        lostMusic.setVolume(0.3f);
+        lostMusic.setPosition(3);
         //music.play();
         //music.setLooping(true);
         batch = new SpriteBatch();
@@ -64,6 +68,9 @@ public class AnimatorTestGame extends Game {
     }
     public Music getGameMusic() {
         return gameMusic;
+    }
+    public Music getLostMusic() {
+        return lostMusic;
     }
 
     public void playMenuMusic() {
@@ -91,5 +98,19 @@ public class AnimatorTestGame extends Game {
 
     public void pauseGameMusic() {
         gameMusic.pause();
+    }
+
+    public void playLostMusic() {
+        if(!lostMusic.isPlaying()) {
+            lostMusic.play();
+
+        }
+    }
+    public void stopLostMusic() {
+        lostMusic.stop();
+    }
+
+    public void pauseLostMusic() {
+        lostMusic.pause();
     }
 }

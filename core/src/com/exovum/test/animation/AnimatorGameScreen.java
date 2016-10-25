@@ -66,7 +66,7 @@ public class AnimatorGameScreen implements Screen {
     private Game game;
     private Screen parent;
 
-    private Music gameMusic;
+    private Sound crashSound;
 
     private TextureAtlas atlas;
 
@@ -100,6 +100,7 @@ public class AnimatorGameScreen implements Screen {
         this.game = game;
         this.parent = parentScreen;
 
+        crashSound = Gdx.audio.newSound(Gdx.files.internal("crash-1.wav"));
 
         float w = Gdx.graphics.getWidth();
         float h = Gdx.graphics.getHeight();
@@ -316,9 +317,13 @@ public class AnimatorGameScreen implements Screen {
                     jkirbyAnimatedSprite.play();
                     //camera.lookAt(0, 0, 0);
                     //camera.lookAt();
-                    // If the game is paused AND the player has lost, then reset everthing
+                    // If the game is paused AND the player has lost, then reset everything
                     if (jkirbyAnimatedSprite.isLost()) {
                         reset();
+                        // Stop the lost game music
+                        ((AnimatorTestGame)game).stopLostMusic();
+                        // Pause the normal game music
+                        ((AnimatorTestGame)game).playGameMusic();
                     }
                     // else: player has not lost yet, so continue their same run without resetting
                 }
@@ -514,7 +519,14 @@ public class AnimatorGameScreen implements Screen {
                         //        camera.viewportHeight / 2 );
                         //backButton.setPosition(viewport.getScreenX(), viewport.getScreenY());
                         paused = true;
+
+                        // Play the lost game music
+                        ((AnimatorTestGame)game).playLostMusic();
+                        // Pause the normal game music
+                        ((AnimatorTestGame)game).pauseGameMusic();
                         //reset();
+                        // Play the crash sound effect
+                        crashSound.play(0.5f);
                     }
                 }
             }
@@ -569,7 +581,7 @@ public class AnimatorGameScreen implements Screen {
             // If the player has lost, then display the losing text
             if(jkirbyAnimatedSprite.isLost()) {
                 font.setColor(Color.FIREBRICK);
-                glyphLayout.setText(font, "Such disappoint. Much fail. Wow.");
+                glyphLayout.setText(font, "RIP in Peace");
                 font.draw(batch, glyphLayout, camera.position.x - glyphLayout.width / 2,
                         camera.viewportHeight / 2 - glyphLayout.height * 4);
                 font.setColor(Color.BLACK);
@@ -722,14 +734,22 @@ public class AnimatorGameScreen implements Screen {
     public void pause() {
         paused = true;
         jkirbyAnimatedSprite.pause();
-        ((AnimatorTestGame)game).pauseGameMusic();
+        if(jkirbyAnimatedSprite.isLost()) {
+            ((AnimatorTestGame)game).pauseLostMusic();
+        } else {
+            ((AnimatorTestGame)game).pauseGameMusic();
+        }
     }
 
     @Override
     public void resume() {
         //paused = false;
         //jkirbyAnimatedSprite.play();
-        ((AnimatorTestGame)game).playGameMusic();
+        if(jkirbyAnimatedSprite.isLost()) {
+            ((AnimatorTestGame)game).playLostMusic();
+        } else {
+            ((AnimatorTestGame)game).playGameMusic();
+        }
     }
 
     @Override
