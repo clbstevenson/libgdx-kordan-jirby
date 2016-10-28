@@ -67,6 +67,9 @@ public class AnimatorGameScreen implements Screen {
     private Screen parent;
 
     private Sound crashSound;
+    private Sprite flagTexture;
+
+    private float flagMovement;
 
     private TextureAtlas atlas;
 
@@ -101,6 +104,9 @@ public class AnimatorGameScreen implements Screen {
         this.parent = parentScreen;
 
         crashSound = Gdx.audio.newSound(Gdx.files.internal("crash-1.wav"));
+        flagTexture = new Sprite(new Texture(Gdx.files.internal("flag.png")));
+        flagTexture.setSize(128, 256);
+        flagMovement = 0;
 
         float w = Gdx.graphics.getWidth();
         float h = Gdx.graphics.getHeight();
@@ -289,7 +295,7 @@ public class AnimatorGameScreen implements Screen {
                         jkirbyAnimatedSprite.pause();
                         return true;
 
-                };
+                }
                 return false;
             }
 
@@ -387,12 +393,12 @@ public class AnimatorGameScreen implements Screen {
         jkirbyAnimatedSprite.setLastDistance(0);
 
         // Reset the traps
-        for(TrapSprite s: traps) {
+        //for(TrapSprite s: traps) {
             // Not sure if this is necessary, but just in case I suppose
             //s.getTexture().dispose();
             // INCORRECT: do not dispose of the textures because of using the same sprite.
             // If we created new sprites on reset, then disposing would be the correct action.
-        }
+        //}
         traps.clear();
         Gdx.app.log("AnimatorGameScreen", "traps size: " + traps.size);
         shortTree.setPosition(camera.viewportWidth, floorPos);
@@ -438,9 +444,10 @@ public class AnimatorGameScreen implements Screen {
             // Increment distanceTraveled based on moveSpeed
 
 
-        } else {
-            // Game is paused
         }
+        //else {
+            // Game is paused
+        //}
 
         // Determine which map is currently displayed, switch currentMap to that map,
         // and then draw the old map after the other new currentMap
@@ -527,6 +534,10 @@ public class AnimatorGameScreen implements Screen {
                         //reset();
                         // Play the crash sound effect
                         crashSound.play(0.5f);
+                        // Set the position of the flag for drawing
+                        flagTexture.setPosition(camera.position.x - flagTexture.getWidth() / 2,
+                                camera.viewportHeight / 2 - flagTexture.getHeight() * 2.5f);
+                        flagMovement = 0; // reset the flag movement
                     }
                 }
             }
@@ -551,29 +562,30 @@ public class AnimatorGameScreen implements Screen {
         font.draw(batch, glyphLayout, camera.position.x - glyphLayout.width / 2,
                 camera.viewportHeight / 2);
         // Draw the number of TrapSprites in the traps Array
-        glyphLayout.setText(smallFont, traps.size + " TrapSprites");
+        /*glyphLayout.setText(smallFont, traps.size + " TrapSprites");
         smallFont.draw(batch, glyphLayout, camera.position.x - glyphLayout.width / 2,
                 0);
         glyphLayout.setText(smallFont, "Velocity-X: " + jkirbyAnimatedSprite.getVelocityX());
         smallFont.draw(batch, glyphLayout, camera.position.x - glyphLayout.width / 2,
                 glyphLayout.height);
+        */
 
 
         // Display some text when the game is paused
         if(paused) {
             // paused, so don't move camera or player but draw some text
-            glyphLayout.setText(smallFont, "Press the screen to continue!");
+            glyphLayout.setText(smallFont, "Press the screen to try again.");
             smallFont.draw(batch, glyphLayout, camera.position.x - glyphLayout.width / 2,
                     camera.viewportHeight / 4 - glyphLayout.height * 2);
             switch(Gdx.app.getType()) {
                 case Android:
-                    glyphLayout.setText(smallFont, "Press the back button for the menu!");
+                    glyphLayout.setText(smallFont, "Press the back button for the menu.");
                     break;
                 case Desktop:
-                    glyphLayout.setText(smallFont, "Press 'Escape' for the menu!");
+                    glyphLayout.setText(smallFont, "Press 'Escape' for the menu.");
                     break;
                 default:
-                    glyphLayout.setText(smallFont, "Press the back button or 'Escape' for the menu!");
+                    glyphLayout.setText(smallFont, "Press the back button or 'Escape' for the menu.");
             }
 
             smallFont.draw(batch, glyphLayout, camera.position.x - glyphLayout.width / 2,
@@ -585,6 +597,15 @@ public class AnimatorGameScreen implements Screen {
                 font.draw(batch, glyphLayout, camera.position.x - glyphLayout.width / 2,
                         camera.viewportHeight / 2 - glyphLayout.height * 4);
                 font.setColor(Color.BLACK);
+
+                // Draw the KJ flag
+                //flagTexture.draw(batch);
+                flagTexture.draw(batch, 0.6f + 0.3f * flagMovement / 1000);
+                if(flagMovement < 1000) {
+                    flagMovement++;
+                    flagTexture.setPosition(flagTexture.getX(), flagTexture.getY() + 0.15f);
+                }
+
             }
 
         }
@@ -626,6 +647,9 @@ public class AnimatorGameScreen implements Screen {
     private void handleInput() {
     }
 
+    /*
+     * Function no longer in use. See function: addTrapSample(int trapPos) for update.
+     *   It caused traps to continue spawning indefinitely and at un-intended locations.
     private void addRandomTrapAtPos(int trapPos) {
         int randomValue = (int) Math.random() ;
         Gdx.app.log("AnimatorGameScreen", "addRandomTrap: randomValue = " + randomValue);
@@ -644,8 +668,8 @@ public class AnimatorGameScreen implements Screen {
                 // In TrapSprite extension of Sprite, method setPosition(x,y) is now called to fix this.
                 //addTrap(new TrapSprite(new Texture(Gdx.files.internal("flat-tree-game-ornaments/tree-1.png")),
                 //        trapPos, (int)floorPos, 35, 40));
-                /*addTrap(new TrapSprite(TrapSprite.TrapType.SHORT,
-                        trapPos, (int)floorPos, 35, 40));*/
+                //addTrap(new TrapSprite(TrapSprite.TrapType.SHORT,
+                //        trapPos, (int)floorPos, 35, 40));
                 break;
             case 1:
                 Gdx.app.log("AnimatorGameScreen", "addRandomTrap: tree-2 at " + trapPos);
@@ -659,10 +683,17 @@ public class AnimatorGameScreen implements Screen {
                 //addTrap(new TrapSprite(TrapSprite.TrapType.TALL,
                 //        trapPos, (int)floorPos, 50, 80));
                 break;
-        };
+        }
     }
+    */
 
-    public void addTrapSample(int trapPos) {
+    /*
+        Update from function addRandomTrapAtPos(int pos).
+        This function creates a new TrapSprite, places it at x-position @param trapPos.
+        Currently, it is a 60:40 ratio for spawning a small trap to a large trap.
+        For reference: the type of traps and ratios can change later to include more options.
+     */
+    private void addTrapSample(int trapPos) {
         int randomValue = ((int)(Math.random() * 10));
         Gdx.app.log("AnimatorGameScreen", "addTrapSample: randomValue = " + randomValue +
         ";  trapPos = " + trapPos);
@@ -691,10 +722,9 @@ public class AnimatorGameScreen implements Screen {
 
     // Returns the next valid position for a trap based on the last trap in the Array of traps
     private int nextTrapSlot() {
-        int slotFromLastTrap = nextTrapSlotFrom(traps.get(traps.size - 1));
+        //int slotFromLastTrap = nextTrapSlotFrom(traps.get(traps.size - 1));
         //Gdx.app.log("AnimatorGameScreen", "nextTrapSlot() = " + slotFromLastTrap);
-        //return nextTrapSlotFrom(traps.get(traps.size - 1));
-        return slotFromLastTrap;
+        return nextTrapSlotFrom(traps.get(traps.size - 1));
     }
 
     // Returns the next valid position for a trap based on the given Trap's location
@@ -704,9 +734,9 @@ public class AnimatorGameScreen implements Screen {
         float minDist = 400;
         float increment = minDist + randomRange * (jkirbyAnimatedSprite.getVelocityX() * 50);
         //int nextSlot = (int)(trap.getX() + trap.getWidth() + 400 + randomDist);
-        int nextSlot = (int)(trap.getX() + trap.getWidth() + increment);
+        return (int)(trap.getX() + trap.getWidth() + increment);
         //Gdx.app.log("AnimatorGameScreen", "nextTrapSlotFrom() = " + nextSlot);
-        return nextSlot;
+        //return nextSlot;
     }
 
     @Override
