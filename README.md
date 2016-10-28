@@ -11,6 +11,16 @@ The basis for this repository is my high school senior project. The original was
 
 ------
 
+### Branch Project: local-jkirby
+
+The local-jkirby branch is a related project to libgdx-rain, using the same library. However it is a test case for the larger project. It highlights some of the basic features needed, such as the following: Sprite rendering, animations, collision detection, graphics scaling and screen size adjustments, texture packing, and finally app submission to Google Play.
+
+In fact, this respository may become a hub for my libgdx projects. The repository could be renamed libgdx-exovum or something along those lines. This will be resolved later. TODO.
+
+Further, as one of the desired features to be tested is Google Play app submission, the link to the local-jkirby app will be linked HERE.
+
+------
+
 ### Original Project
 
 ### [Penguin Pong](http://www.github.com/exovum/PenguinPong)
