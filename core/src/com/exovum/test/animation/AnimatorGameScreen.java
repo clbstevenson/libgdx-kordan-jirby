@@ -614,9 +614,9 @@ public class AnimatorGameScreen implements Screen {
         // Render all of the traps
         for(int i = 0; i < traps.size; i++) {
             traps.get(i).draw(batch);
-            glyphLayout.setText(smallFont, "(" + traps.get(i).getX() + "," + traps.get(i).getY() + ")");
-            smallFont.draw(batch, glyphLayout, traps.get(i).getX() - glyphLayout.width/2 + traps.get(i).getWidth() / 2,
-                    traps.get(i).getY() - glyphLayout.height);
+            //glyphLayout.setText(smallFont, "(" + traps.get(i).getX() + "," + traps.get(i).getY() + ")");
+            //smallFont.draw(batch, glyphLayout, traps.get(i).getX() - glyphLayout.width/2 + traps.get(i).getWidth() / 2,
+            //  traps.get(i).getY() - glyphLayout.height);
         }
         /*
         for(TrapSprite trap: traps) {
