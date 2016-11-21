@@ -1,30 +1,13 @@
-# libgdx-rain
+# libgdx-kordan-jirby
 
-### Goals of this project
+This project is a present I made for a friend for his birthday. It is a simple 2D runner made using libGDX where the player jumps over obstacles to go as far as possible. 
 
-* Testing and learning about libgdx resources and functions
-  * Includes: collision detection, processing efficiency, and entity and input handling
-* Improving an [old project](#original-project)
-* Developing an application to be released, primarily through GooglePlay
+The **Kordan Jirby** project has been [released to the Google Play](https://play.google.com/store/apps/details?id=com.exovum.test.collisions.android) app store.
 
-The basis for this repository is my high school senior project. The original was the largest project I had worked on, but it was also several years ago. With this new version, I hope to improve and make some fundamental changes to the gameplay. Graphics and performance should be improved from the original. 
+### Store Listing
+In this 2D runner you play as Kordan Jirby, the hero the world nee-well, the one it has left. He was brought into service not because his skills were top notch or he was the most brave. Instead, Kordan was a last resort. Try your best using your limited jumping abilities and lack of coordination to reach the end of the map, if there even is one.
+Kordan Jirby has been given a hypsometer, a tool for measuring the height of trees or tall objects. With it, he can leap to great heights simply with the tap or swipe of the screen! Surely this is all the help a normal athlete needs to reach his goal.
 
-------
-
-### Branch Project: local-jkirby
-
-The local-jkirby branch is a related project to libgdx-rain, using the same library. However it is a test case for the larger project. It highlights some of the basic features needed, such as the following: Sprite rendering, animations, collision detection, graphics scaling and screen size adjustments, texture packing, and finally app submission to Google Play.
-
-In fact, this respository may become a hub for my libgdx projects. The repository could be renamed libgdx-exovum or something along those lines. This will be resolved later. TODO.
-
-Further, as one of the desired features to be tested is Google Play app submission, the link to the local-jkirby app will be linked HERE.
-
-------
-
-### Original Project
-
-### [Penguin Pong](http://www.github.com/exovum/PenguinPong)
-
-![Robot Penguins](https://github.com/exovum/PenguinPong/blob/master/res/pong/robotpenguin.png "Robot Penguins")
-
-I recently found my old project and uploaded the code to github. In fact, you can [download the last release here](https://github.com/exovum/PenguinPong/releases/download/v1.3/PenguinPong_1-3-1.jar) from github. 
+Controls:
+- Tap the screen for a quick jump over short obstacles
+- Swipe the screen up/down for a high jump over tall obstacles
